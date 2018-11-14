@@ -1,5 +1,8 @@
 #include "Solution.h"
 #include <cmath>
+#include <cstdlib>
+
+const int MAX_INTERVAL=1000;
 
 Solution::Solution(const Problem& pbm):_pbm{pbm}
 {}
@@ -9,13 +12,16 @@ Solution::~Solution()
     //dtor
 }
 
+vector<double>& Solution::solution()
+{return _solution;}
+
 // ====================================================
 
 double fonctionRosenbrock(const std::vector<double> &X)
 {
     double sum = 0.0;
 
-    for (int i = 0; i < X.size() - 1; ++i)
+    for (unsigned i = 0; i < X.size() - 1; ++i)
     {
         double c1 = (X[i + 1] - X[i] * X[i]);
         double c2 = (X[i] - 1.0);
@@ -27,7 +33,6 @@ double fonctionRosenbrock(const std::vector<double> &X)
 
 double fonctionRastrigin(const std::vector<double> &X)
 {
-// possibilité de déclarer une variable globale pour pi
     double pi = 3.1415926535;
     double A = 10.0;
     double sum = 0;
@@ -135,3 +140,16 @@ double Solution::fitness()
     }
     return value;
 }
+
+// ====================================================
+
+void Solution::initialize()
+{
+    _solution.reserve(_pbm.dimension());
+    for (int i=0; i<_pbm.dimension();i++)
+    {
+        _solution.push_back(rand()%MAX_INTERVAL);
+    }
+}
+
+

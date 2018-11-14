@@ -8,3 +8,6 @@ Problem::~Problem()
 
 fonction Problem::func() const
 {return _fonction;}
+
+int Problem::dimension() const
+{return _dimension;}
