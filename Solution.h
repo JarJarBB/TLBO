@@ -13,8 +13,8 @@ class Solution
  	//contient la déclaration d'une solution
 	public:
 		Solution (const Problem& pbm);
-		Solution (const Solution& sol)=default;
-		~Solution();
+		Solution (const Solution& sol) = default;
+		~Solution() = default;
 
  		friend ostream& operator<< (ostream& os, const Solution& sol);
 		friend istream& operator>> (istream& is, Solution& sol);
@@ -26,8 +26,8 @@ class Solution
 		bool operator!= (const Solution& sol) const;
 
 		void initialize();
-		double fitness();
-		double get_fitness();
+		void fitness();
+		double get_fitness() const;
 
 		unsigned int size() const;
 

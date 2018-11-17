@@ -16,7 +16,7 @@ class Problem
 		friend ostream& operator<< (ostream& os, const Problem& pbm);
 		friend istream& operator>> (istream& is, Problem& pbm);
 
-		Problem& operator=  (const Problem& pbm);
+		Problem& operator=  (const Problem& pbm) = default;
 		bool operator== (const Problem& pbm) const;
 		bool operator!= (const Problem& pbm) const;
 

@@ -7,10 +7,6 @@ const int MAX_INTERVAL=1000;
 Solution::Solution(const Problem& pbm):_pbm{pbm}
 {}
 
-Solution::~Solution()
-{
-    //dtor
-}
 
 vector<double>& Solution::solution()
 {return _solution;}
@@ -108,7 +104,7 @@ double fonctionWeierstrass(const std::vector<double> &X)
 
 // ====================================================
 
-double Solution::fitness()
+void Solution::fitness()
 {
     double value = -1.0;
     //...
@@ -138,18 +134,29 @@ double Solution::fitness()
              value = fonctionWeierstrass(_solution);
          break;
     }
-    return value;
+    _current_fitness = value;
 }
 
 // ====================================================
 
+double Solution::get_fitness() const
+{
+    return _current_fitness;
+}
+
 void Solution::initialize()
 {
-    _solution.reserve(_pbm.dimension());
-    for (int i=0; i<_pbm.dimension();i++)
+    _solution.reserve(/*_pbm.dimension()*/3);
+    for (int i = 0; i < _pbm.dimension(); ++i)
     {
-        _solution.push_back(rand()%MAX_INTERVAL);
+        _solution.push_back(rand() % MAX_INTERVAL);
     }
 }
 
 
+ostream& operator<< (ostream& os, const Solution& sol)
+{
+    for(auto i : sol._solution)
+        os << i << " ";
+    return os;
+}

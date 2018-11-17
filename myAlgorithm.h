@@ -13,41 +13,49 @@ using namespace std;
 
 
 
-  class MyAlgorithm
-  {
-	private:
-		vector<Solution*> _solutions;     // individuals in population
-		const SetUpParams& _setup;
-		unsigned int _upper_cost,_lower_cost; // lower and upper fitness of individuals in population
+class MyAlgorithm
+{
+private:
+    vector<Solution*> _solutions;     // individuals in population
+    const SetUpParams& _setup;
+    unsigned int _upper_cost,_lower_cost; // lower and upper fitness of individuals in population
+    
+    // Cette variable a ete ajoute
+    Solution* _best_solution;
+    
+public:
+    MyAlgorithm(const Problem& pbm,const SetUpParams& setup);
+    ~MyAlgorithm();
 
-	public:
-		MyAlgorithm(const Problem& pbm,const SetUpParams& setup);
-		~MyAlgorithm();
+    friend ostream& operator<< (ostream& os, const MyAlgorithm& myAlgo);
+    friend istream& operator>> (istream& is, MyAlgorithm& myAlgo);
+    MyAlgorithm& operator= (const MyAlgorithm& myAlgo);
+    const SetUpParams& setup() const;
+    void initialize();
+    
+    // Ces fonctions ont ete ajoute
+    void evaluateFitness();
+    void determineBestSolution();
 
-		friend ostream& operator<< (ostream& os, const MyAlgorithm& myAlgo);
-		friend istream& operator>> (istream& is, MyAlgorithm& myAlgo);
-		MyAlgorithm& operator= (const MyAlgorithm& myAlgo);
-		const SetUpParams& setup() const;
-	  	void initialize();
+    // creates a array with fitness of all solutions in MyAlgorithm and its position in the MyAlgorithm
+    /*Cette fonction ne sert à mon avis à rien (pour nous) puisqu'on n'a pas à utiliser la "struct fitness" :
+    void evaluate();*/
 
-		// creates a array with fitness of all solutions in MyAlgorithm and its position in the MyAlgorithm
-        void evaluate();
-
-	 	const vector<Solution*>& solutions() const;
-		unsigned int upper_cost() const;
-		unsigned int lower_cost() const;
-		Solution& solution(const unsigned int index) const;
-       // vector<struct particle>&  fitness_values();
-		double fitness(const unsigned int index) const;
+    const vector<Solution*>& solutions() const;
+    unsigned int upper_cost() const;
+    unsigned int lower_cost() const;
+    Solution& solution(const unsigned int index) const;
+  // vector<struct particle>&  fitness_values();
+    double fitness(const unsigned int index) const;
 
 
-		double best_cost() const;
-		double worst_cost() const;
-		Solution& best_solution() const;
-		Solution& worst_solution() const;
+    double best_cost() const;
+    double worst_cost() const;
+    Solution& best_solution() const;
+    Solution& worst_solution() const;
 
-		void evolution(int iter); /*makes an evolution step*/
+    void evolution(int iter); /*makes an evolution step*/
 
-  };
+};
 
 #endif
