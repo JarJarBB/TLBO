@@ -9,12 +9,9 @@ int main() {
     Problem p{taille_probleme, Weierstrass};
     MyAlgorithm algo{p, setup};
     
-    algo.initialize();
-    algo.evaluateFitness();
-    algo.determineBestSolution();
+    algo.run();
     
     cout << algo.best_solution() << endl;
     
-
     return 0;
 }

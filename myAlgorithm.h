@@ -34,6 +34,7 @@ public:
     void initialize();
     
     // Ces fonctions ont ete ajoute
+    void run();
     void evaluateFitness();
     void determineBestSolution();
 

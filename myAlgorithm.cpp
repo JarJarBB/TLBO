@@ -52,3 +52,11 @@ Solution& MyAlgorithm::best_solution() const
 {
     return *_best_solution;
 }
+
+
+void MyAlgorithm::run()
+{
+    initialize();
+    evaluateFitness();
+    determineBestSolution();
+}
