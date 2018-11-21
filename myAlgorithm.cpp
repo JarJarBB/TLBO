@@ -1,7 +1,8 @@
 #include "myAlgorithm.h"
+#include <random>
+#include <ctime>
 
-
-MyAlgorithm::MyAlgorithm(const Problem& pbm,const SetUpParams& setup) : _setup{setup}, _solutions(setup.population_size()), _best_solution{nullptr}
+MyAlgorithm::MyAlgorithm(const Problem& pbm,const SetUpParams& setup) : _setup{setup}, _solutions(setup.population_size()), _best_solution{nullptr},Moyenne{0.0}
 {
     for (auto& i : _solutions)
         i = new Solution{pbm};
@@ -17,6 +18,19 @@ void MyAlgorithm::initialize()
 {
     for (auto i : _solutions)
         i->initialize();
+}
+
+void MyAlgorithm::Calcul_Moyenne(){
+    Moyenne=0.0;
+    for(auto i : _solutions) Moyenne+=i->get_fitness();
+    Moyenne/=_solutions.size();
+}
+
+double MyAlgorithm::Difference_Mean(const Solution* S) const {
+    double R = rand()*1.0/RAND_MAX;/** est pareil pour chaque Difference_Mean durant un step*/
+    double X = _best_solution->get_fitness();
+    double T = (rand() % 2)+1;
+    return R*(X-T*Moyenne);
 }
 
 const vector<Solution*>& MyAlgorithm::solutions() const

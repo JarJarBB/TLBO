@@ -19,10 +19,11 @@ private:
     vector<Solution*> _solutions;     // individuals in population
     const SetUpParams& _setup;
     unsigned int _upper_cost,_lower_cost; // lower and upper fitness of individuals in population
-    
+
     // Cette variable a ete ajoute
     Solution* _best_solution;
-    
+    double Moyenne;
+
 public:
     MyAlgorithm(const Problem& pbm,const SetUpParams& setup);
     ~MyAlgorithm();
@@ -32,15 +33,17 @@ public:
     MyAlgorithm& operator= (const MyAlgorithm& myAlgo);
     const SetUpParams& setup() const;
     void initialize();
-    
+
     // Ces fonctions ont ete ajoute
     void run();
     void evaluateFitness();
     void determineBestSolution();
+    void Calcul_Moyenne();
+    double Difference_Mean(const Solution* S) const;
 
     // creates a array with fitness of all solutions in MyAlgorithm and its position in the MyAlgorithm
-    /*Cette fonction ne sert à mon avis à rien (pour nous) puisqu'on n'a pas à utiliser la "struct fitness" :
-    void evaluate();*/
+    /** Cette fonction ne sert à mon avis à rien (pour nous) puisqu'on n'a pas à utiliser la "struct fitness" :*/
+    //void evaluate();
 
     const vector<Solution*>& solutions() const;
     unsigned int upper_cost() const;
