@@ -38,18 +38,16 @@ public:
     void run();
     void evaluateFitness();
     void determineBestSolution();
-    void Calcul_Moyenne();
-    double Difference_Mean(const Solution* S) const;
+    vector<double> MeanPerColumn() const;
+    double Difference_Mean(int j, const vector<double>& Means, double r) const;
+    void Teaching();
+    void Learning();
 
-    // creates a array with fitness of all solutions in MyAlgorithm and its position in the MyAlgorithm
-    /** Cette fonction ne sert à mon avis à rien (pour nous) puisqu'on n'a pas à utiliser la "struct fitness" :*/
-    //void evaluate();
 
     const vector<Solution*>& solutions() const;
     unsigned int upper_cost() const;
     unsigned int lower_cost() const;
     Solution& solution(const unsigned int index) const;
-  // vector<struct particle>&  fitness_values();
     double fitness(const unsigned int index) const;
 
 
@@ -57,7 +55,8 @@ public:
     double worst_cost() const;
     Solution& best_solution() const;
     Solution& worst_solution() const;
-
+    
+    /** il faudra peut-etre remplacer la fonction run() par cette fonction evolution() du prof... */
     void evolution(int iter); /*makes an evolution step*/
 
 };

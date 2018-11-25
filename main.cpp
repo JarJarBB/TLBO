@@ -6,7 +6,7 @@ using namespace std;
 int main() {
     SetUpParams setup{};
     const int taille_probleme = setup.solution_size();
-    Problem p{taille_probleme, Weierstrass};
+    Problem p{taille_probleme, Rastrigin};
     MyAlgorithm algo{p, setup};
     
     algo.run();

@@ -7,7 +7,7 @@ using namespace std;
 
 class SetUpParams
 {
-  	//ici vous devez mettre quelques paramètres tels que :
+  	//ici vous devez mettre quelques parametres tels que :
 
 	private:
 		unsigned int   _independent_runs;         //number of independent runs
