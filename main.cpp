@@ -4,6 +4,7 @@
 using namespace std;
 
 int main() {
+
     SetUpParams setup{};
     const int taille_probleme = setup.solution_size();
     Problem p{taille_probleme, Rastrigin};

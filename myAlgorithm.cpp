@@ -39,15 +39,6 @@ vector<double> MyAlgorithm::MeanPerColumn() const
     return Means;
 }
 
-double MyAlgorithm::Difference_Mean(int j, const vector<double>& Means, double r) const
-{
-    double Xbest = _best_solution->solution()[j];
-    double Tf = tabRand[rand() % 3]; //'One' is twice as likely to be chosen as '2'
-    double M = Means[j];
-    
-    return r * (Xbest - Tf * M);
-}
-
 const vector<Solution*>& MyAlgorithm::solutions() const
 {
     return _solutions;
@@ -82,56 +73,94 @@ Solution& MyAlgorithm::best_solution() const
     return *_best_solution;
 }
 
-void MyAlgorithm::Teaching()
+double MyAlgorithm::Difference_Mean(int j, const vector<double>& Means, double r) const
+{
+    double Xbest = _best_solution->solution()[j];
+    double Tf = tabRand[rand() % 3]; //'One' is twice as likely to be chosen as '2'
+    double M = Means[j];
+    
+    return r * (Xbest - Tf * M);
+}
+
+void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)
+{
+    Solution* newSolution = new Solution{*_solutions[k]};
+    vector<double>& tabNewSolution{ newSolution->solution() };
+    
+    for (int j = 0; j < _setup.solution_size(); ++j)
+        tabNewSolution[j] += Difference_Mean(j, Means, r);
+    
+    newSolution->fitness();
+    
+    if (abs(newSolution->get_fitness()) < abs(_solutions[k]->get_fitness()))
+    {
+        delete _solutions[k];
+        _solutions[k] = newSolution;
+    }
+    else delete newSolution;
+}
+
+void MyAlgorithm::Teaching(double r)
 {
     vector<double> Means = MeanPerColumn();
     determineBestSolution();
-    double r = rand() * 1.0 / RAND_MAX;
     for (int k = 0; k < _setup.population_size(); ++k)
     {
         if (_solutions[k] != _best_solution)
         {
-            Solution* newSolution = new Solution{*_solutions[k]};
-            vector<double>& tabNewSolution{ newSolution->solution() };
-            
-            for (int j = 0; j < _setup.solution_size(); ++j)
-                tabNewSolution[j] += Difference_Mean(j, Means, r);
-            
-            newSolution->fitness();
-            
-            if (abs(newSolution->get_fitness()) < abs(_solutions[k]->get_fitness()))
-            {
-                delete _solutions[k];
-                _solutions[k] = newSolution;
-            }
-            else delete newSolution;
+            learnFromTeacher(k, Means, r);
         }
     }
 }
 
-void MyAlgorithm::Learning()
+void MyAlgorithm::learnFromPeer(int P, int Q, double r)
 {
+    Solution* newP = new Solution{*_solutions[P]};
+    vector<double>& tabNewP{ newP->solution() };
+    vector<double>& tabQ{ _solutions[Q]->solution() };
     
+    if (newP->get_fitness() < _solutions[Q]->get_fitness())
+    {
+        for (int j = 0; j < _setup.solution_size(); ++j)
+            tabNewP[j] += r * (tabNewP[j] - tabQ[j]);
+    }
+    else
+    {
+        for (int j = 0; j < _setup.solution_size(); ++j)
+            tabNewP[j] += r * (tabQ[j] - tabNewP[j]);
+    }
     
+    newP->fitness();
     
-    
-    
-    
+    if (abs(newP->get_fitness()) < abs(_solutions[P]->get_fitness()))
+    {
+        delete _solutions[P];
+        _solutions[P] = newP;
+    }
+    else delete newP;
 }
 
+void MyAlgorithm::Learning(double r)
+{
+    for (int k = 0; k < _setup.population_size(); ++k)
+    {
+        int Q = rand() % _setup.population_size();
+        learnFromPeer(k, Q, r);
+    }
+}
 
 void MyAlgorithm::run()
 {
-    
+    srand(static_cast<unsigned int>(time(NULL)));
     initialize();
     evaluateFitness();
-
     int i = 0;
-    while (i < 100)// !!!   "i < _setup.nb_evolution_steps()" j'ai mis 100 pour raccourcir le temps d'execution
+    while (i < 10000)// !!!   "i < _setup.nb_evolution_steps()" j'ai mis 100 pour raccourcir le temps d'execution
     {
-        Teaching();
-        Learning();
+        double r = rand() * 1.0 / RAND_MAX;
+        Teaching(r);
+        Learning(r);
         ++i;
+        cout << _best_solution->get_fitness() << endl;
     }
-
 }

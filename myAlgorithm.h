@@ -40,8 +40,10 @@ public:
     void determineBestSolution();
     vector<double> MeanPerColumn() const;
     double Difference_Mean(int j, const vector<double>& Means, double r) const;
-    void Teaching();
-    void Learning();
+    void learnFromTeacher(int k, const vector<double>& Means, double r);
+    void Teaching(double r);
+    void learnFromPeer(int P, int Q, double r);
+    void Learning(double r);
 
 
     const vector<Solution*>& solutions() const;
