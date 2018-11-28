@@ -32,7 +32,7 @@ public:
     friend istream& operator>> (istream& is, MyAlgorithm& myAlgo);
     MyAlgorithm& operator= (const MyAlgorithm& myAlgo);
     const SetUpParams& setup() const;
-    void initialize();
+    void initialize(const int MAX);
 
     // Ces fonctions ont ete ajoute
     void run();
@@ -44,6 +44,7 @@ public:
     void Teaching(double r);
     void learnFromPeer(int P, int Q, double r);
     void Learning(double r);
+    void UpdateBestSolutionOverall(Solution* &OverallBestSolution);
 
 
     const vector<Solution*>& solutions() const;
@@ -58,7 +59,6 @@ public:
     Solution& best_solution() const;
     Solution& worst_solution() const;
     
-    /** il faudra peut-etre remplacer la fonction run() par cette fonction evolution() du prof... */
     void evolution(int iter); /*makes an evolution step*/
 
 };

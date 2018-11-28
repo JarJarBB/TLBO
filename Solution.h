@@ -10,7 +10,7 @@ using namespace std;
 
 class Solution
 {
- 	//contient la déclaration d'une solution
+ 	//contient la declaration d'une solution
 	public:
 		Solution (const Problem& pbm);
 		Solution (const Solution& sol) = default;
@@ -25,7 +25,7 @@ class Solution
 		bool operator== (const Solution& sol) const;
 		bool operator!= (const Solution& sol) const;
 
-		void initialize();
+		void initialize(const int MAX);
 		void fitness();
 		double get_fitness() const;
 

@@ -2,14 +2,22 @@
 #include <cmath>
 #include <cstdlib>
 
-const int MAX_INTERVAL=1000;
 
-Solution::Solution(const Problem& pbm):_pbm{pbm}
+Solution::Solution(const Problem& pbm): _pbm{pbm}
 {}
 
+Solution& Solution::operator=(const Solution& sol)
+{
+    _solution = sol._solution;
+    _current_fitness = sol._current_fitness;
+    
+    return *this;
+}
 
 vector<double>& Solution::solution()
-{return _solution;}
+{
+    return _solution;
+}
 
 // ====================================================
 
@@ -107,7 +115,6 @@ double fonctionWeierstrass(const std::vector<double> &X)
 void Solution::fitness()
 {
     double value = -1.0;
-    //...
     switch(_pbm.func())
     {
          case Rosenbrock:
@@ -144,13 +151,13 @@ double Solution::get_fitness() const
     return _current_fitness;
 }
 
-void Solution::initialize()
+void Solution::initialize(const int MAX)
 {
-    _solution.reserve(/*_pbm.dimension()*/3);
+    _solution.clear();
+    _solution.reserve(_pbm.dimension());
+    
     for (int i = 0; i < _pbm.dimension(); ++i)
-    {
-        _solution.push_back(rand() % MAX_INTERVAL);
-    }
+        _solution.push_back(rand() % MAX);
 }
 
 
