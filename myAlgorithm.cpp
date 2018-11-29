@@ -5,7 +5,7 @@
 const int MAX_INTERVAL = 1000;
 int tabRand[] = {1, 1, 2};
 
-MyAlgorithm::MyAlgorithm(const Problem& pbm,const SetUpParams& setup) : _setup{setup}, _solutions(setup.population_size()), _best_solution{nullptr}, Moyenne{0.0}
+MyAlgorithm::MyAlgorithm(const Problem& pbm, const SetUpParams& setup) : _setup{setup}, _solutions(setup.population_size()), _best_solution{nullptr}
 {
     for (auto& i : _solutions)
         i = new Solution{pbm};
@@ -22,7 +22,7 @@ MyAlgorithm::~MyAlgorithm()
 void MyAlgorithm::initialize(const int MAX)
 {
     for (auto i : _solutions)
-        i->initialize(MAX);
+        i->initialize(MAX); // i->Solution::initialize(MAX);
 }
 
 vector<double> MyAlgorithm::MeanPerColumn() const
@@ -31,13 +31,16 @@ vector<double> MyAlgorithm::MeanPerColumn() const
     
     for (auto k : _solutions)
     {
-        vector<double>& S = k->solution();
-        for (int i = 0; i < S.size(); ++i)
-            Means[i] += S[i];
+        if (k != _best_solution)
+        {
+            vector<double>& S = k->solution();
+            for (int i = 0; i < S.size(); ++i)
+                Means[i] += S[i];
+        }
     }
     
     for (auto& i : Means)
-        i /= _setup.population_size();
+        i /= _setup.population_size() - 1;
     
     return Means;
 }
@@ -169,7 +172,7 @@ void MyAlgorithm::UpdateBestSolutionOverall(Solution* &OverallBestSolution)
 {
     if (!OverallBestSolution)
         OverallBestSolution = new Solution{*_best_solution};
-    else if (OverallBestSolution->get_fitness() > _best_solution->get_fitness())
+    else if (abs(OverallBestSolution->get_fitness()) > abs(_best_solution->get_fitness()))
         *OverallBestSolution = *_best_solution;
 }
 
@@ -183,7 +186,7 @@ void MyAlgorithm::run()
    
     Solution* OverallBestSolution = nullptr;
     
-    for (auto MAXi : TRIALS)
+    for (int MAXi : TRIALS)
     {
         initialize(MAXi);
         evaluateFitness();

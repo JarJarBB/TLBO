@@ -22,7 +22,6 @@ private:
 
     // Cette variable a ete ajoute
     Solution* _best_solution;
-    double Moyenne;
 
 public:
     MyAlgorithm(const Problem& pbm,const SetUpParams& setup);
