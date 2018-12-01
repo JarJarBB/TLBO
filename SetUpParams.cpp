@@ -49,7 +49,7 @@ void SetUpParams::solution_size(const unsigned int val)
 ostream& operator<< (std::ostream& os, const SetUpParams& setup)
 {
     os<<"Le nombre de runs independants est "<<setup.independent_runs()<<std::endl<<"Le nombre d'evolutions est "<<setup.nb_evolution_steps()
-    <<std::endl<<"Le nombre d'individu est "<<setup.population_size()<<std::endl<<"Le nombre de solution est "<<setup.solution_size()<<std::endl;
+    <<std::endl<<"Le nombre d'individu est "<<setup.population_size()<<std::endl<<"La taille d'une solution est "<<setup.solution_size()<<std::endl;
     return os;
 }
 

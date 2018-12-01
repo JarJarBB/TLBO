@@ -66,7 +66,7 @@ void MyAlgorithm::determineBestSolution()
 
         for (auto i : _solutions)
         {
-            if (i->get_fitness() < min)
+            if (abs(i->get_fitness()) < abs(min))
             {
                 min = i->get_fitness();
                 _best_solution = i;
@@ -110,7 +110,6 @@ void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)
 void MyAlgorithm::Teaching(double r)
 {
     vector<double> Means = MeanPerColumn();
-    determineBestSolution();
     for (int k = 0; k < _setup.population_size(); ++k)
     {
         if (_solutions[k] != _best_solution)
@@ -126,7 +125,7 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
     vector<double>& tabNewP{ newP->solution() };
     vector<double>& tabQ{ _solutions[Q]->solution() };
     
-    if (newP->get_fitness() < _solutions[Q]->get_fitness())
+    if (abs(newP->get_fitness()) < abs(_solutions[Q]->get_fitness()))
     {
         for (int j = 0; j < _setup.solution_size(); ++j)
             tabNewP[j] += r * (tabNewP[j] - tabQ[j]);
@@ -164,7 +163,11 @@ void MyAlgorithm::evolution(int iter)
         double r = rand() * 1.0 / RAND_MAX;
         Teaching(r);
         Learning(r);
+        determineBestSolution();
         ++i;
+
+        cout << endl << "Fitness: " << _best_solution->get_fitness() << endl;
+        cout << *_best_solution << endl;
     }
 }
 
@@ -190,11 +193,9 @@ void MyAlgorithm::run()
     {
         initialize(MAXi);
         evaluateFitness();
+        determineBestSolution();
         evolution(_setup.nb_evolution_steps());
         UpdateBestSolutionOverall(OverallBestSolution);
-        
-        cout << _best_solution->get_fitness() << endl;
-        
     }
     _best_solution = OverallBestSolution;
 }

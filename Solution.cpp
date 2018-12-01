@@ -63,7 +63,6 @@ double fonctionAckley(const std::vector<double> &X)
     return -a * std::exp(-b * std::sqrt(sum1 / d)) - std::exp(sum2 / d) + a + std::exp(1.0);
 }
 
-
 double fonctionSchwefel(const std::vector<double> &X)
 {
     double sum = 0;
@@ -107,8 +106,6 @@ double fonctionWeierstrass(const std::vector<double> &X)
 
     return sum1 - X.size() * sum3;
 }
-
-
 
 // ====================================================
 
@@ -159,7 +156,6 @@ void Solution::initialize(const int MAX)
     for (int i = 0; i < _pbm.dimension(); ++i)
         _solution.push_back(rand() % MAX);
 }
-
 
 ostream& operator<< (ostream& os, const Solution& sol)
 {
