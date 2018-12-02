@@ -1,10 +1,13 @@
 #include "SetUpParams.h"
 
-SetUpParams::SetUpParams(unsigned int independent_runs, unsigned int nb_evolution_steps, unsigned int population_size, unsigned int solution_size): _independent_runs{independent_runs} , _nb_evolution_steps{nb_evolution_steps} ,
- _population_size{population_size} , _solution_size{solution_size}
-{
-    //ctor
-}
+SetUpParams::SetUpParams(unsigned int independent_runs,
+                         unsigned int nb_evolution_steps,
+                         unsigned int population_size,
+                         unsigned int solution_size):
+                             _independent_runs{independent_runs} ,
+                             _nb_evolution_steps{nb_evolution_steps} ,
+                             _population_size{population_size} ,
+                             _solution_size{solution_size} {}
 
 const unsigned int SetUpParams::independent_runs() const
 {

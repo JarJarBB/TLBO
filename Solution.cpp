@@ -159,7 +159,9 @@ void Solution::initialize(const int MAX)
 
 ostream& operator<< (ostream& os, const Solution& sol)
 {
-    for(auto i : sol._solution)
-        os << i << " ";
+    int i;
+    for (i = 0; i < sol._solution.size() - 1; ++i)
+        os << sol._solution[i] << ", ";
+    os << sol._solution[i];
     return os;
 }
