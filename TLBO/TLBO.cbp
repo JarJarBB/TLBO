@@ -13,6 +13,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="include" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -32,7 +33,15 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="include/Problem.h" />
+		<Unit filename="include/SetUpParams.h" />
+		<Unit filename="include/Solution.h" />
+		<Unit filename="include/myAlgorithm.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/Problem.cpp" />
+		<Unit filename="src/SetUpParams.cpp" />
+		<Unit filename="src/Solution.cpp" />
+		<Unit filename="src/myAlgorithm.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

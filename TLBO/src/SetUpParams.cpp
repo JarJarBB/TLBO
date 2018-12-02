@@ -1,10 +1,13 @@
 #include "SetUpParams.h"
 
-SetUpParams::SetUpParams(unsigned int independent_runs, unsigned int nb_evolution_steps, unsigned int population_size, unsigned int solution_size): _independent_runs{independent_runs} , _nb_evolution_steps{nb_evolution_steps} ,
- _population_size{population_size} , _solution_size{solution_size}
-{
-    //ctor
-}
+SetUpParams::SetUpParams(unsigned int independent_runs,
+                         unsigned int nb_evolution_steps,
+                         unsigned int population_size,
+                         unsigned int solution_size):
+                             _independent_runs{independent_runs} ,
+                             _nb_evolution_steps{nb_evolution_steps} ,
+                             _population_size{population_size} ,
+                             _solution_size{solution_size} {}
 
 const unsigned int SetUpParams::independent_runs() const
 {
@@ -49,7 +52,7 @@ void SetUpParams::solution_size(const unsigned int val)
 ostream& operator<< (std::ostream& os, const SetUpParams& setup)
 {
     os<<"Le nombre de runs independants est "<<setup.independent_runs()<<std::endl<<"Le nombre d'evolutions est "<<setup.nb_evolution_steps()
-    <<std::endl<<"Le nombre d'individu est "<<setup.population_size()<<std::endl<<"Le nombre de solution est "<<setup.solution_size()<<std::endl;
+    <<std::endl<<"Le nombre d'individu est "<<setup.population_size()<<std::endl<<"La taille d'une solution est "<<setup.solution_size()<<std::endl;
     return os;
 }
 

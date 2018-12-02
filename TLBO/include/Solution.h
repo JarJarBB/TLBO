@@ -2,15 +2,12 @@
 #define SOLUTION_H
 #include <iostream>
 #include <vector>
-
-
 #include "Problem.h"
 
 using namespace std;
 
 class Solution
 {
- 	//contient la déclaration d'une solution
 	public:
 		Solution (const Problem& pbm);
 		Solution (const Solution& sol) = default;
@@ -25,7 +22,7 @@ class Solution
 		bool operator== (const Solution& sol) const;
 		bool operator!= (const Solution& sol) const;
 
-		void initialize();
+		void initialize(const int MAX);
 		void fitness();
 		double get_fitness() const;
 
@@ -36,7 +33,7 @@ class Solution
 		double& position(const int index); //retournera une position du tableau _solution
         void  position(const int index, const double value);
 
-
+    
 	private:
         vector<double> _solution;
         double _current_fitness;

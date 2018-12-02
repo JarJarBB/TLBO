@@ -22,7 +22,6 @@ private:
 
     // Cette variable a ete ajoute
     Solution* _best_solution;
-    double Moyenne;
 
 public:
     MyAlgorithm(const Problem& pbm,const SetUpParams& setup);
@@ -32,24 +31,25 @@ public:
     friend istream& operator>> (istream& is, MyAlgorithm& myAlgo);
     MyAlgorithm& operator= (const MyAlgorithm& myAlgo);
     const SetUpParams& setup() const;
-    void initialize();
+    void initialize(const int MAX);
 
     // Ces fonctions ont ete ajoute
     void run();
     void evaluateFitness();
     void determineBestSolution();
-    void Calcul_Moyenne();
-    double Difference_Mean(const Solution* S) const;
+    vector<double> MeanPerColumn() const;
+    double Difference_Mean(int j, const vector<double>& Means, double r) const;
+    void learnFromTeacher(int k, const vector<double>& Means, double r);
+    void Teaching(double r);
+    void learnFromPeer(int P, int Q, double r);
+    void Learning(double r);
+    void UpdateBestSolutionOverall(Solution* &OverallBestSolution);
 
-    // creates a array with fitness of all solutions in MyAlgorithm and its position in the MyAlgorithm
-    /** Cette fonction ne sert à mon avis à rien (pour nous) puisqu'on n'a pas à utiliser la "struct fitness" :*/
-    //void evaluate();
 
     const vector<Solution*>& solutions() const;
     unsigned int upper_cost() const;
     unsigned int lower_cost() const;
     Solution& solution(const unsigned int index) const;
-  // vector<struct particle>&  fitness_values();
     double fitness(const unsigned int index) const;
 
 
@@ -57,7 +57,7 @@ public:
     double worst_cost() const;
     Solution& best_solution() const;
     Solution& worst_solution() const;
-
+    
     void evolution(int iter); /*makes an evolution step*/
 
 };
