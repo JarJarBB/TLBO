@@ -154,7 +154,12 @@ void Solution::initialize(const int MAX)
     _solution.reserve(_pbm.dimension());
     
     for (int i = 0; i < _pbm.dimension(); ++i)
-        _solution.push_back(rand() % MAX);
+    {
+        if (rand() % 2 == 0)
+            _solution.push_back(rand() % MAX);
+        else
+            _solution.push_back(-(rand() % MAX));
+    }
 }
 
 ostream& operator<< (ostream& os, const Solution& sol)

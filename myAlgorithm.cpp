@@ -2,7 +2,7 @@
 #include <random>
 #include <ctime>
 
-const int MAX_INTERVAL = 1000;
+const int MAX_INTERVAL = 500;
 int tabRand[] = {1, 1, 2};
 
 MyAlgorithm::MyAlgorithm(const Problem& pbm, const SetUpParams& setup) :
@@ -98,7 +98,11 @@ void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)
     vector<double>& tabNewSolution{ newSolution->solution() };
 
     for (int j = 0; j < _setup.solution_size(); ++j)
-        tabNewSolution[j] += Difference_Mean(j, Means, r);
+    {
+        double diffMean = Difference_Mean(j, Means, r);
+        if (abs(tabNewSolution[j] + diffMean) <= MAX_INTERVAL)
+            tabNewSolution[j] += diffMean;
+    }
 
     newSolution->fitness();
 
@@ -131,16 +135,22 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
     if (abs(newP->get_fitness()) < abs(_solutions[Q]->get_fitness()))
     {
         for (int j = 0; j < _setup.solution_size(); ++j)
-            tabNewP[j] += r * (tabNewP[j] - tabQ[j]);
+        {
+            double add = r * (tabNewP[j] - tabQ[j]);
+            if (abs(tabNewP[j] + add) <= MAX_INTERVAL)
+                tabNewP[j] += add;
+        }
     }
     else
     {
         for (int j = 0; j < _setup.solution_size(); ++j)
-            tabNewP[j] += r * (tabQ[j] - tabNewP[j]);
+        {
+            double add = r * (tabQ[j] - tabNewP[j]);
+            if (abs(tabNewP[j] + add) <= MAX_INTERVAL)
+                tabNewP[j] += add;
+        }
     }
-
     newP->fitness();
-
     if (abs(newP->get_fitness()) < abs(_solutions[P]->get_fitness()))
     {
         delete _solutions[P];
