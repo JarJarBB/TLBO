@@ -1,0 +1,44 @@
+# depslib dependency file v1.0
+1543857477 source:c:\users\antoine\documents\cours l3s1\lhassane idoumghar\ia\tlbo\main.cpp
+	<iostream>
+	"myAlgorithm.h"
+	<iomanip>
+
+1543857477 c:\users\antoine\documents\cours l3s1\lhassane idoumghar\ia\tlbo\myalgorithm.h
+	<iostream>
+	<fstream>
+	<cmath>
+	<vector>
+	"SetUpParams.h"
+	"Problem.h"
+	"Solution.h"
+
+1543857477 c:\users\antoine\documents\cours l3s1\lhassane idoumghar\ia\tlbo\setupparams.h
+	<iostream>
+	<vector>
+
+1543857477 c:\users\antoine\documents\cours l3s1\lhassane idoumghar\ia\tlbo\problem.h
+	<iostream>
+	<vector>
+
+1543857477 c:\users\antoine\documents\cours l3s1\lhassane idoumghar\ia\tlbo\solution.h
+	<iostream>
+	<vector>
+	"Problem.h"
+
+1543857477 source:c:\users\antoine\documents\cours l3s1\lhassane idoumghar\ia\tlbo\myalgorithm.cpp
+	"myAlgorithm.h"
+	<random>
+	<ctime>
+
+1543857477 source:c:\users\antoine\documents\cours l3s1\lhassane idoumghar\ia\tlbo\problem.cpp
+	"Problem.h"
+
+1543857477 source:c:\users\antoine\documents\cours l3s1\lhassane idoumghar\ia\tlbo\setupparams.cpp
+	"SetUpParams.h"
+
+1543857477 source:c:\users\antoine\documents\cours l3s1\lhassane idoumghar\ia\tlbo\solution.cpp
+	"Solution.h"
+	<cmath>
+	<cstdlib>
+
