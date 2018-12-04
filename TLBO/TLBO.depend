@@ -41,3 +41,17 @@
 1543771602 source:c:\users\pierre vix\desktop\git\tlbo\src\setupparams.cpp
 	"SetUpParams.h"
 
+1543916508 source:\\uha.fr\users\e1603982\bureau\tlbo-v-pierre\tlbo\src\problem.cpp
+	"Problem.h"
+
+1543916508 \\uha.fr\users\e1603982\bureau\tlbo-v-pierre\tlbo\include\problem.h
+	<iostream>
+	<vector>
+
+1543916508 source:\\uha.fr\users\e1603982\bureau\tlbo-v-pierre\tlbo\src\setupparams.cpp
+	"SetUpParams.h"
+
+1543916508 \\uha.fr\users\e1603982\bureau\tlbo-v-pierre\tlbo\include\setupparams.h
+	<iostream>
+	<vector>
+

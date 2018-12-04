@@ -2,7 +2,7 @@
 #include <random>
 #include <ctime>
 
-const int MAX_INTERVAL = 1000;
+const int MAX_INTERVAL = 500;
 int tabRand[] = {1, 1, 2};
 
 MyAlgorithm::MyAlgorithm(const Problem& pbm, const SetUpParams& setup) :
@@ -86,7 +86,7 @@ Solution& MyAlgorithm::best_solution() const
 double MyAlgorithm::Difference_Mean(int j, const vector<double>& Means, double r) const
 {
     double Xbest = _best_solution->solution()[j];
-    double Tf = tabRand[(rand() % 2)+1]; //'One' is twice as likely to be chosen as '2' : euh pas sur que ce soit bon
+    double Tf = tabRand[rand() % 3]; //'One' is twice as likely to be chosen as '2'
     double M = Means[j];
 
     return r * (Xbest - Tf * M);
@@ -98,7 +98,11 @@ void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)
     vector<double>& tabNewSolution{ newSolution->solution() };
 
     for (int j = 0; j < _setup.solution_size(); ++j)
-        tabNewSolution[j] += Difference_Mean(j, Means, r);
+    {
+        double diffMean = Difference_Mean(j, Means, r);
+        if (abs(tabNewSolution[j] + diffMean) <= MAX_INTERVAL)
+            tabNewSolution[j] += diffMean;
+    }
 
     newSolution->fitness();
 
@@ -131,16 +135,22 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
     if (abs(newP->get_fitness()) < abs(_solutions[Q]->get_fitness()))
     {
         for (int j = 0; j < _setup.solution_size(); ++j)
-            tabNewP[j] += r * (tabNewP[j] - tabQ[j]);
+        {
+            double add = r * (tabNewP[j] - tabQ[j]);
+            if (abs(tabNewP[j] + add) <= MAX_INTERVAL)
+                tabNewP[j] += add;
+        }
     }
     else
     {
         for (int j = 0; j < _setup.solution_size(); ++j)
-            tabNewP[j] += r * (tabQ[j] - tabNewP[j]);
+        {
+            double add = r * (tabQ[j] - tabNewP[j]);
+            if (abs(tabNewP[j] + add) <= MAX_INTERVAL)
+                tabNewP[j] += add;
+        }
     }
-
     newP->fitness();
-
     if (abs(newP->get_fitness()) < abs(_solutions[P]->get_fitness()))
     {
         delete _solutions[P];
@@ -161,7 +171,7 @@ void MyAlgorithm::Learning(double r)
 void MyAlgorithm::evolution(int iter)
 {
     int i = 0;
-    while (i < iter && _best_solution->get_fitness()!=0)
+    while (i < iter && _best_solution->get_fitness() != 0.0)
     {
         double r = rand() * 1.0 / RAND_MAX;
         Teaching(r);
@@ -199,7 +209,7 @@ void MyAlgorithm::run()
         determineBestSolution();
         evolution(_setup.nb_evolution_steps());
         UpdateBestSolutionOverall(OverallBestSolution);
-        if (_best_solution->get_fitness()==0) break;
+        if (OverallBestSolution->get_fitness() == 0.0) break;
     }
     _best_solution = OverallBestSolution;
 }
