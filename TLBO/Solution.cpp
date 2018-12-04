@@ -3,14 +3,14 @@
 #include <cstdlib>
 
 
-Solution::Solution(const Problem& pbm): _pbm{pbm}
+Solution::Solution(const Problem& pbm, SetUpParams& setup): _pbm{pbm}, _setup{setup}
 {}
 
 Solution& Solution::operator=(const Solution& sol)
 {
     _solution = sol._solution;
     _current_fitness = sol._current_fitness;
-    
+
     return *this;
 }
 
@@ -148,17 +148,17 @@ double Solution::get_fitness() const
     return _current_fitness;
 }
 
-void Solution::initialize(const int MAX)
+void Solution::initialize()
 {
     _solution.clear();
     _solution.reserve(_pbm.dimension());
-    
+
     for (int i = 0; i < _pbm.dimension(); ++i)
     {
         if (rand() % 2 == 0)
-            _solution.push_back(rand() % MAX);
+            _solution.push_back(rand() % _setup.max_intervalle());
         else
-            _solution.push_back(-(rand() % MAX));
+            _solution.push_back(-(rand() % _setup.max_intervalle()));
     }
 }
 

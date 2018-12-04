@@ -3,11 +3,25 @@
 SetUpParams::SetUpParams(unsigned int independent_runs,
                          unsigned int nb_evolution_steps,
                          unsigned int population_size,
-                         unsigned int solution_size):
+                         unsigned int solution_size,
+                         int max_intervalle,
+                         int min_intervalle):
                              _independent_runs{independent_runs} ,
                              _nb_evolution_steps{nb_evolution_steps} ,
                              _population_size{population_size} ,
-                             _solution_size{solution_size} {}
+                             _solution_size{solution_size},
+                             _max_intervalle{max_intervalle},
+                             _min_intervalle{min_intervalle}{}
+
+const int   SetUpParams::max_intervalle ()const
+{
+    return _max_intervalle;
+}
+
+const int   SetUpParams::min_intervalle ()const
+{
+    return _min_intervalle;
+}
 
 const unsigned int SetUpParams::independent_runs() const
 {
@@ -27,6 +41,15 @@ const unsigned int SetUpParams::population_size() const
 const unsigned int SetUpParams::solution_size() const
 {
     return _solution_size;
+}
+
+void SetUpParams::max_intervalle (const int val)
+{
+    _max_intervalle=val;
+}
+void SetUpParams::min_intervalle (const int val)
+{
+    _min_intervalle=val;
 }
 
 void SetUpParams::independent_runs(const unsigned int val)

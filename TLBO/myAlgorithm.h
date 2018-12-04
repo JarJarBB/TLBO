@@ -24,14 +24,14 @@ private:
     Solution* _best_solution;
 
 public:
-    MyAlgorithm(const Problem& pbm,const SetUpParams& setup);
+    MyAlgorithm(const Problem& pbm, SetUpParams& setup);
     ~MyAlgorithm();
 
     friend ostream& operator<< (ostream& os, const MyAlgorithm& myAlgo);
     friend istream& operator>> (istream& is, MyAlgorithm& myAlgo);
     MyAlgorithm& operator= (const MyAlgorithm& myAlgo);
     const SetUpParams& setup() const;
-    void initialize(const int MAX);
+    void initialize();
 
     // Ces fonctions ont ete ajoute
     void run();
@@ -57,7 +57,7 @@ public:
     double worst_cost() const;
     Solution& best_solution() const;
     Solution& worst_solution() const;
-    
+
     void evolution(int iter); /*makes an evolution step*/
 
 };
