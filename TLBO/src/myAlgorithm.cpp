@@ -2,6 +2,7 @@
 #include <random>
 #include <ctime>
 
+
 const int MAX_INTERVAL = 500;
 int tabRand[] = {1, 1, 2};
 
@@ -168,7 +169,7 @@ void MyAlgorithm::Learning(double r)
     }
 }
 
-void MyAlgorithm::evolution(int iter)
+void MyAlgorithm::evolution(int iter,Viewer& fenetre)
 {
     int i = 0;
     while (i < iter && _best_solution->get_fitness() != 0.0)
@@ -178,7 +179,10 @@ void MyAlgorithm::evolution(int iter)
         Learning(r);
         determineBestSolution();
         ++i;
-
+        fenetre.add(_best_solution->get_fitness());
+        fenetre.clear();
+        fenetre.afficheInit();
+        fenetre.waitUntilButton(); /** ? */
         cout << endl << "Fitness: " << _best_solution->get_fitness() << endl;
         cout << *_best_solution << endl;
     }
@@ -192,7 +196,7 @@ void MyAlgorithm::UpdateBestSolutionOverall(Solution* &OverallBestSolution)
         *OverallBestSolution = *_best_solution;
 }
 
-void MyAlgorithm::run()
+void MyAlgorithm::run(Viewer& fenetre)
 {
     srand(static_cast<unsigned int>(time(NULL)));
     vector<int> TRIALS;
@@ -201,13 +205,12 @@ void MyAlgorithm::run()
         TRIALS.push_back(rand() % MAX_INTERVAL + 1);
 
     Solution* OverallBestSolution = nullptr;
-
     for (int MAXi : TRIALS)
     {
         initialize(MAXi);
         evaluateFitness();
         determineBestSolution();
-        evolution(_setup.nb_evolution_steps());
+        evolution(_setup.nb_evolution_steps(),fenetre);
         UpdateBestSolutionOverall(OverallBestSolution);
         if (OverallBestSolution->get_fitness() == 0.0) break;
     }

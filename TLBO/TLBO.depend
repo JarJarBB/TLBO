@@ -55,3 +55,58 @@
 	<iostream>
 	<vector>
 
+1543921380 source:\\uha.fr\users\e1603982\bureau\tlbo-v-pierre\tlbo\main.cpp
+	<iostream>
+	"myAlgorithm.h"
+	<iomanip>
+	"Viewer.h"
+
+1543919400 \\uha.fr\users\e1603982\bureau\tlbo-v-pierre\tlbo\include\myalgorithm.h
+	<iostream>
+	<fstream>
+	<cmath>
+	<vector>
+	"SetUpParams.h"
+	"Problem.h"
+	"Solution.h"
+	"Viewer.h"
+
+1543916508 \\uha.fr\users\e1603982\bureau\tlbo-v-pierre\tlbo\include\solution.h
+	<iostream>
+	<vector>
+	"Problem.h"
+
+1543921420 source:\\uha.fr\users\e1603982\bureau\tlbo-v-pierre\tlbo\src\myalgorithm.cpp
+	"myAlgorithm.h"
+	<random>
+	<ctime>
+
+1543916616 source:\\uha.fr\users\e1603982\bureau\tlbo-v-pierre\tlbo\src\solution.cpp
+	"Solution.h"
+	<cmath>
+	<cstdlib>
+
+1543917023 source:\\uha.fr\users\e1603982\bureau\tlbo-v-pierre\tlbo\src\winbgi.cpp
+	<windows.h>
+	<stddef.h>
+	<stdio.h>
+	<math.h>
+	"../graphics.h"
+
+1543856403 \\uha.fr\users\e1603982\bureau\tlbo-v-pierre\tlbo\graphics.h
+
+1544021688 source:\\uha.fr\users\e1603982\bureau\tlbo-v-pierre\tlbo\src\viewer.cpp
+	"Viewer.h"
+	<iostream>
+	<sstream>
+
+1544016720 \\uha.fr\users\e1603982\bureau\tlbo-v-pierre\tlbo\include\viewer.h
+	<vector>
+	"../graphics.h"
+	"viewPort.hpp"
+
+1543856404 source:\\uha.fr\users\e1603982\bureau\tlbo-v-pierre\tlbo\src\viewport.cpp
+	"viewPort.hpp"
+
+1543856403 \\uha.fr\users\e1603982\bureau\tlbo-v-pierre\tlbo\include\viewport.hpp
+
