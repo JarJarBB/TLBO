@@ -39,7 +39,7 @@ class Solution
         vector<double> _solution;
         double _current_fitness;
 		const Problem& _pbm;
-		SetUpParams& _setup;
+		const SetUpParams& _setup;
 };
 
 #endif // SOLUTION_H

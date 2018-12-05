@@ -195,14 +195,10 @@ void MyAlgorithm::UpdateBestSolutionOverall(Solution* &OverallBestSolution)
 void MyAlgorithm::run()
 {
     srand(static_cast<unsigned int>(time(NULL)));
-    vector<int> TRIALS;
-    TRIALS.reserve(_setup.independent_runs());
-    for (int i = 0; i < TRIALS.capacity(); ++i)
-        TRIALS.push_back(rand() % _setup.max_intervalle() + 1);
 
     Solution* OverallBestSolution = nullptr;
 
-    for (int MAXi : TRIALS)
+    for (int i=0; i<_setup.independent_runs(); i++)
     {
         initialize();
         evaluateFitness();

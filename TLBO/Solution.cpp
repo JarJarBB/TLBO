@@ -156,15 +156,17 @@ void Solution::initialize()
     for (int i = 0; i < _pbm.dimension(); ++i)
     {
         if (rand() % 2 == 0)
-            _solution.push_back(rand() % _setup.max_intervalle());
+            _solution.push_back(rand() % _pbm.max_intervalle());
         else
-            _solution.push_back(-(rand() % _setup.max_intervalle()));
+            _solution.push_back(-(rand() % _pbm.min_intervalle()));
     }
 }
 
+//_solution.push_backrand() % (_pbm.max_intervalle()-1-_pbm.min_intervalle-2))+_pbm.min_intervalle)+(rand()*1.0)/;
+
 ostream& operator<< (ostream& os, const Solution& sol)
 {
-    int i;
+    unsigned int i;
     for (i = 0; i < sol._solution.size() - 1; ++i)
         os << sol._solution[i] << ", ";
     os << sol._solution[i];

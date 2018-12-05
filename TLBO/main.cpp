@@ -13,7 +13,7 @@ int main()
 
     SetUpParams setup{30, 1000, 40, 6};
     const int taille_probleme = setup.solution_size();
-    Problem p{taille_probleme, Rastrigin};
+    Problem p{taille_probleme, Rastrigin,};
 
 
     MyAlgorithm algo{p, setup};
