@@ -10,7 +10,7 @@ enum fonction {Rosenbrock, Rastrigin, Ackley, Schwefel, Schaffer, Weierstrass};
 class Problem
 {
 	public:
-		Problem(int dimension, fonction f);
+		Problem(int dimension, fonction f, int min_intervalle = -500, int max_intervalle = 500);
 		~Problem();
 
 		friend ostream& operator<< (ostream& os, const Problem& pbm);
@@ -24,10 +24,18 @@ class Problem
 		double LowerLimit, UpperLimit;
 		fonction func() const;
 
+		void max_intervalle (const int val);
+		void min_intervalle (const int val);
+
+		const int   max_intervalle ()const;
+		const int   min_intervalle ()const;
+
 	private:
 
 		int _dimension;
 		fonction _fonction;
+        int   _max_intervalle;
+		int   _min_intervalle;
 };
 
 #endif // PROBLEM_H

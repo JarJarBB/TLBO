@@ -10,7 +10,7 @@ Solution& Solution::operator=(const Solution& sol)
 {
     _solution = sol._solution;
     _current_fitness = sol._current_fitness;
-    
+
     return *this;
 }
 
@@ -148,23 +148,23 @@ double Solution::get_fitness() const
     return _current_fitness;
 }
 
-void Solution::initialize(const int MAX)
+double generateDouble(int min, int max)
+{
+    return min + (max - min) * (rand() * 1.0 / RAND_MAX);
+}
+
+void Solution::initialize()
 {
     _solution.clear();
     _solution.reserve(_pbm.dimension());
-    
+
     for (int i = 0; i < _pbm.dimension(); ++i)
-    {
-        if (rand() % 2 == 0)
-            _solution.push_back(rand() % MAX);
-        else
-            _solution.push_back(-(rand() % MAX));
-    }
+        _solution.push_back(generateDouble(_pbm.min_intervalle(), _pbm.max_intervalle()));
 }
 
-ostream& operator<< (ostream& os, const Solution& sol)
+ostream& operator<<(ostream& os, const Solution& sol)
 {
-    int i;
+    unsigned int i;
     for (i = 0; i < sol._solution.size() - 1; ++i)
         os << sol._solution[i] << ", ";
     os << sol._solution[i];

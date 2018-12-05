@@ -2,13 +2,14 @@
 #include <random>
 #include <ctime>
 
-const int MAX_INTERVAL = 500;
+//const int MAX_INTERVAL = 500;
 int tabRand[] = {1, 1, 2};
 
-MyAlgorithm::MyAlgorithm(const Problem& pbm, const SetUpParams& setup) :
+MyAlgorithm::MyAlgorithm(const Problem& pbm, SetUpParams& setup) :
             _setup{setup},
             _solutions(setup.population_size()),
-            _best_solution{nullptr}
+            _best_solution{nullptr},
+            _pbm{pbm}
 {
     for (auto& i : _solutions)
         i = new Solution{pbm};
@@ -22,10 +23,10 @@ MyAlgorithm::~MyAlgorithm()
     delete _best_solution;
 }
 
-void MyAlgorithm::initialize(const int MAX)
+void MyAlgorithm::initialize()
 {
     for (auto i : _solutions)
-        i->initialize(MAX); // i->Solution::initialize(MAX);
+        i->initialize(); // i->Solution::initialize(MAX);
 }
 
 vector<double> MyAlgorithm::MeanPerColumn() const
@@ -100,7 +101,7 @@ void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)
     for (int j = 0; j < _setup.solution_size(); ++j)
     {
         double diffMean = Difference_Mean(j, Means, r);
-        if (abs(tabNewSolution[j] + diffMean) <= MAX_INTERVAL)
+        if (tabNewSolution[j] + diffMean <= _pbm.max_intervalle() && tabNewSolution[j] + diffMean >= _pbm.min_intervalle())
             tabNewSolution[j] += diffMean;
     }
 
@@ -120,9 +121,7 @@ void MyAlgorithm::Teaching(double r)
     for (int k = 0; k < _setup.population_size(); ++k)
     {
         if (_solutions[k] != _best_solution)
-        {
             learnFromTeacher(k, Means, r);
-        }
     }
 }
 
@@ -137,7 +136,7 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
         for (int j = 0; j < _setup.solution_size(); ++j)
         {
             double add = r * (tabNewP[j] - tabQ[j]);
-            if (abs(tabNewP[j] + add) <= MAX_INTERVAL)
+            if (tabNewP[j] + add <= _pbm.max_intervalle() && tabNewP[j] + add >= _pbm.min_intervalle())
                 tabNewP[j] += add;
         }
     }
@@ -146,7 +145,7 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
         for (int j = 0; j < _setup.solution_size(); ++j)
         {
             double add = r * (tabQ[j] - tabNewP[j]);
-            if (abs(tabNewP[j] + add) <= MAX_INTERVAL)
+            if (tabNewP[j] + add <= _pbm.max_intervalle() && tabNewP[j] + add >= _pbm.min_intervalle())
                 tabNewP[j] += add;
         }
     }
@@ -195,16 +194,12 @@ void MyAlgorithm::UpdateBestSolutionOverall(Solution* &OverallBestSolution)
 void MyAlgorithm::run()
 {
     srand(static_cast<unsigned int>(time(NULL)));
-    vector<int> TRIALS;
-    TRIALS.reserve(_setup.independent_runs());
-    for (int i = 0; i < TRIALS.capacity(); ++i)
-        TRIALS.push_back(rand() % MAX_INTERVAL + 1);
 
     Solution* OverallBestSolution = nullptr;
 
-    for (int MAXi : TRIALS)
+    for (int i = 0; i < _setup.independent_runs(); ++i)
     {
-        initialize(MAXi);
+        initialize();
         evaluateFitness();
         determineBestSolution();
         evolution(_setup.nb_evolution_steps());

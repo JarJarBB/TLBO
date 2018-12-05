@@ -2,6 +2,7 @@
 #define SOLUTION_H
 #include <iostream>
 #include <vector>
+#include "SetUpParams.h"
 #include "Problem.h"
 
 using namespace std;
@@ -22,7 +23,7 @@ class Solution
 		bool operator== (const Solution& sol) const;
 		bool operator!= (const Solution& sol) const;
 
-		void initialize(const int MAX);
+		void initialize();
 		void fitness();
 		double get_fitness() const;
 
@@ -33,7 +34,7 @@ class Solution
 		double& position(const int index); //retournera une position du tableau _solution
         void  position(const int index, const double value);
 
-    
+
 	private:
         vector<double> _solution;
         double _current_fitness;
