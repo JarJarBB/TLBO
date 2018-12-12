@@ -1,0 +1,45 @@
+# depslib dependency file v1.0
+1544619737 source:u:\documents\tlbo_philipe\main.cpp
+	<iostream>
+	"myAlgorithm.h"
+	<iomanip>
+
+1544619735 u:\documents\tlbo_philipe\myalgorithm.h
+	<iostream>
+	<fstream>
+	<cmath>
+	<vector>
+	"SetUpParams.h"
+	"Problem.h"
+	"Solution.h"
+
+1544619735 u:\documents\tlbo_philipe\setupparams.h
+	<iostream>
+	<vector>
+
+1544619735 u:\documents\tlbo_philipe\problem.h
+	<iostream>
+	<vector>
+
+1544620563 u:\documents\tlbo_philipe\solution.h
+	<iostream>
+	<vector>
+	"SetUpParams.h"
+	"Problem.h"
+
+1544619735 source:u:\documents\tlbo_philipe\myalgorithm.cpp
+	"myAlgorithm.h"
+	<random>
+	<ctime>
+
+1544619735 source:u:\documents\tlbo_philipe\problem.cpp
+	"Problem.h"
+
+1544619735 source:u:\documents\tlbo_philipe\setupparams.cpp
+	"SetUpParams.h"
+
+1544621227 source:u:\documents\tlbo_philipe\solution.cpp
+	"Solution.h"
+	<cmath>
+	<cstdlib>
+
