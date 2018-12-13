@@ -167,7 +167,7 @@ void MyAlgorithm::Learning(double r)
     }
 }
 
-void MyAlgorithm::evolution(int iter)
+void MyAlgorithm::evolution(int iter,Viewer& fenetre)
 {
     int i = 0;
     while (i < iter && _best_solution->get_fitness() != 0.0)
@@ -177,7 +177,11 @@ void MyAlgorithm::evolution(int iter)
         Learning(r);
         determineBestSolution();
         ++i;
-
+        fenetre.add(_best_solution->get_fitness());
+        fenetre.clear();
+        fenetre.afficheInit();
+        fenetre.waitUntilButton();
+        //fenetre.waitUntilButton(); /** ? */
         cout << endl << "Fitness: " << _best_solution->get_fitness() << endl;
         cout << *_best_solution << endl;
     }
@@ -191,7 +195,7 @@ void MyAlgorithm::UpdateBestSolutionOverall(Solution* &OverallBestSolution)
         *OverallBestSolution = *_best_solution;
 }
 
-void MyAlgorithm::run()
+void MyAlgorithm::run(Viewer& fenetre)
 {
     srand(static_cast<unsigned int>(time(NULL)));
 
@@ -202,7 +206,7 @@ void MyAlgorithm::run()
         initialize();
         evaluateFitness();
         determineBestSolution();
-        evolution(_setup.nb_evolution_steps());
+        evolution(_setup.nb_evolution_steps(),fenetre);
         UpdateBestSolutionOverall(OverallBestSolution);
         if (OverallBestSolution->get_fitness() == 0.0) break;
     }

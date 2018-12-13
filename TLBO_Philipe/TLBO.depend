@@ -4,7 +4,7 @@
 	"myAlgorithm.h"
 	<iomanip>
 
-1544619735 u:\documents\tlbo_philipe\myalgorithm.h
+1544685261 u:\documents\tlbo_philipe\myalgorithm.h
 	<iostream>
 	<fstream>
 	<cmath>
@@ -12,6 +12,7 @@
 	"SetUpParams.h"
 	"Problem.h"
 	"Solution.h"
+	"Viewer.h"
 
 1544619735 u:\documents\tlbo_philipe\setupparams.h
 	<iostream>
@@ -27,7 +28,7 @@
 	"SetUpParams.h"
 	"Problem.h"
 
-1544619735 source:u:\documents\tlbo_philipe\myalgorithm.cpp
+1544685262 source:u:\documents\tlbo_philipe\myalgorithm.cpp
 	"myAlgorithm.h"
 	<random>
 	<ctime>
@@ -42,4 +43,28 @@
 	"Solution.h"
 	<cmath>
 	<cstdlib>
+
+1543856404 source:u:\documents\tlbo_philipe\viewport.cpp
+	"viewPort.hpp"
+
+1543856403 u:\documents\tlbo_philipe\viewport.hpp
+
+1544021790 source:u:\documents\tlbo_philipe\viewer.cpp
+	"Viewer.h"
+	<iostream>
+	<sstream>
+
+1544684896 u:\documents\tlbo_philipe\viewer.h
+	<vector>
+	"graphics.h"
+	"viewPort.hpp"
+
+1543856403 u:\documents\tlbo_philipe\graphics.h
+
+1544684901 source:u:\documents\tlbo_philipe\winbgi.cpp
+	<windows.h>
+	<stddef.h>
+	<stdio.h>
+	<math.h>
+	"graphics.h"
 

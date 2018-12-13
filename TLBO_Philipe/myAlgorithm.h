@@ -7,7 +7,7 @@
 #include "SetUpParams.h"
 #include "Problem.h"
 #include "Solution.h"
-
+#include "Viewer.h"
 
 using namespace std;
 
@@ -35,7 +35,7 @@ public:
     void initialize();
 
     // Ces fonctions ont ete ajoutees
-    void run();
+    void run(Viewer& fenetre);
     void evaluateFitness();
     void determineBestSolution();
     vector<double> MeanPerColumn() const;
@@ -59,7 +59,7 @@ public:
     Solution& best_solution() const;
     Solution& worst_solution() const;
 
-    void evolution(int iter); /*makes an evolution step*/
+    void evolution(int iter,Viewer& fenetre); /*makes an evolution step*/
 
 };
 
