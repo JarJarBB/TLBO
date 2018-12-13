@@ -1,0 +1,45 @@
+# depslib dependency file v1.0
+1544691255 source:c:\users\antoine\documents\cours l3s1\lhassane idoumghar\phi\main.cpp
+	<iostream>
+	"myAlgorithm.h"
+	<iomanip>
+
+1544690421 c:\users\antoine\documents\cours l3s1\lhassane idoumghar\phi\myalgorithm.h
+	<iostream>
+	<fstream>
+	<cmath>
+	<vector>
+	"SetUpParams.h"
+	"Problem.h"
+	"Solution.h"
+
+1544031704 c:\users\antoine\documents\cours l3s1\lhassane idoumghar\phi\setupparams.h
+	<iostream>
+	<vector>
+
+1544031704 c:\users\antoine\documents\cours l3s1\lhassane idoumghar\phi\problem.h
+	<iostream>
+	<vector>
+
+1544031704 c:\users\antoine\documents\cours l3s1\lhassane idoumghar\phi\solution.h
+	<iostream>
+	<vector>
+	"SetUpParams.h"
+	"Problem.h"
+
+1544691208 source:c:\users\antoine\documents\cours l3s1\lhassane idoumghar\phi\myalgorithm.cpp
+	"myAlgorithm.h"
+	<random>
+	<ctime>
+
+1544031704 source:c:\users\antoine\documents\cours l3s1\lhassane idoumghar\phi\problem.cpp
+	"Problem.h"
+
+1544031704 source:c:\users\antoine\documents\cours l3s1\lhassane idoumghar\phi\setupparams.cpp
+	"SetUpParams.h"
+
+1544031704 source:c:\users\antoine\documents\cours l3s1\lhassane idoumghar\phi\solution.cpp
+	"Solution.h"
+	<cmath>
+	<cstdlib>
+
