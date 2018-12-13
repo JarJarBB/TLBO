@@ -125,6 +125,22 @@ void MyAlgorithm::Teaching(double r)
     }
 }
 
+void MyAlgorithm::VerificationSolutionWithinInterval(vector<double>& tabNewP,int j,double add){
+    if (tabNewP[j] + add <= _pbm.max_intervalle()){
+        if(tabNewP[j] + add >= _pbm.min_intervalle()){
+            tabNewP[j] += add;
+        }
+        else {
+            int tamp=tabNewP[j]-_pbm.min_intervalle();
+            tabNewP[j]-=tamp*(rand() * 1.0 / RAND_MAX);
+        }
+    }
+    else {
+            int tamp=_pbm.max_intervalle()-tabNewP[j];
+            tabNewP[j]+=tamp*(rand() * 1.0 / RAND_MAX);
+        }
+}
+
 void MyAlgorithm::learnFromPeer(int P, int Q, double r)
 {
     Solution* newP = new Solution{*_solutions[P]};
@@ -136,19 +152,29 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
         for (int j = 0; j < _setup.solution_size(); ++j)
         {
             double add = r * (tabNewP[j] - tabQ[j]);
-            if (tabNewP[j] + add <= _pbm.max_intervalle() && tabNewP[j] + add >= _pbm.min_intervalle())
-                tabNewP[j] += add;
+            if (tabNewP[j] + add <= _pbm.max_intervalle()){
+                if(tabNewP[j] + add >= _pbm.min_intervalle()){
+                    tabNewP[j] += add;
+                }
+                else {
+                    int tamp=tabNewP[j]-_pbm.min_intervalle();
+                    tabNewP[j]-=tamp*(rand() * 1.0 / RAND_MAX);
+                }
+            }
+            else {
+                    int tamp=_pbm.max_intervalle()-tabNewP[j];
+                    tabNewP[j]+=tamp*(rand() * 1.0 / RAND_MAX);
+                }
+            }
         }
-    }
     else
     {
         for (int j = 0; j < _setup.solution_size(); ++j)
         {
             double add = r * (tabQ[j] - tabNewP[j]);
-            if (tabNewP[j] + add <= _pbm.max_intervalle() && tabNewP[j] + add >= _pbm.min_intervalle())
-                tabNewP[j] += add;
+            VerificationSolutionWithinInterval(tabNewP,j,add);
+            }
         }
-    }
     newP->fitness();
     if (abs(newP->get_fitness()) < abs(_solutions[P]->get_fitness()))
     {
@@ -180,8 +206,7 @@ void MyAlgorithm::evolution(int iter,Viewer& fenetre)
         fenetre.add(_best_solution->get_fitness());
         fenetre.clear();
         fenetre.afficheInit();
-        fenetre.waitUntilButton();
-        //fenetre.waitUntilButton(); /** ? */
+        //delay(100);
         cout << endl << "Fitness: " << _best_solution->get_fitness() << endl;
         cout << *_best_solution << endl;
     }
@@ -208,7 +233,10 @@ void MyAlgorithm::run(Viewer& fenetre)
         determineBestSolution();
         evolution(_setup.nb_evolution_steps(),fenetre);
         UpdateBestSolutionOverall(OverallBestSolution);
-        if (OverallBestSolution->get_fitness() == 0.0) break;
+        if (OverallBestSolution->get_fitness() == 0.0) {
+            fenetre.waitUntilButton();
+            break;
+        }
     }
     _best_solution = OverallBestSolution;
 }

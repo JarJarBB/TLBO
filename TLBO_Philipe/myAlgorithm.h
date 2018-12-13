@@ -60,7 +60,7 @@ public:
     Solution& worst_solution() const;
 
     void evolution(int iter,Viewer& fenetre); /*makes an evolution step*/
-
+    void VerificationSolutionWithinInterval(vector<double>& tabNewP,int j,double add);
 };
 
 #endif

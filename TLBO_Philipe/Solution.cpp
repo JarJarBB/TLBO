@@ -148,7 +148,7 @@ double Solution::get_fitness() const
     return _current_fitness;
 }
 
-double generateDouble(int min, int max)
+double Solution::generateDouble(int min, int max)
 {
     return min + (max - min) * (rand() * 1.0 / RAND_MAX);
 }
