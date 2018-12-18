@@ -148,18 +148,27 @@ double Solution::get_fitness() const
     return _current_fitness;
 }
 
-double generateDouble(int min, int max)
+double Solution::generateDouble(int min, int max)
 {
     return min + (max - min) * (rand() * 1.0 / RAND_MAX);
+}
+
+void Solution::generateDoubleWithinInterval(double& minborne,double& maxborne){
+    minborne=generateDouble(_pbm.min_intervalle(), _pbm.max_intervalle());
+    maxborne=generateDouble(minborne, _pbm.max_intervalle());
+    _solution.push_back(generateDouble(minborne,maxborne));
 }
 
 void Solution::initialize()
 {
     _solution.clear();
     _solution.reserve(_pbm.dimension());
-
+    double minborne,maxborne;
     for (int i = 0; i < _pbm.dimension(); ++i)
-        _solution.push_back(generateDouble(_pbm.min_intervalle(), _pbm.max_intervalle()));
+    {
+        generateDoubleWithinInterval(minborne,maxborne);
+    }
+
 }
 
 ostream& operator<<(ostream& os, const Solution& sol)

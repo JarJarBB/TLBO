@@ -2,7 +2,7 @@
 #include <random>
 #include <ctime>
 
-//const int MAX_INTERVAL = 500;
+const double MAXSPEED = 1.6;
 int tabRand[] = {1, 1, 2};
 
 MyAlgorithm::MyAlgorithm(const Problem& pbm, SetUpParams& setup) :
@@ -27,6 +27,21 @@ void MyAlgorithm::initialize()
 {
     for (auto i : _solutions)
         i->initialize(); // i->Solution::initialize(MAX);
+}
+
+void MyAlgorithm::speedControl(const vector<double> &oldS, vector<double> &newS) const
+{
+    for (int i = 0; i < oldS.size(); ++i)
+    {
+        double signe;
+        if (newS[i] / oldS[i] >= 0.0) signe = 1.0;
+        else signe = -1.0;
+
+        if (abs(newS[i]) > abs(oldS[i] * MAXSPEED))
+            newS[i] = signe * oldS[i] * MAXSPEED;
+        else if (abs(newS[i]) < abs(oldS[i] / MAXSPEED))
+            newS[i] = signe * oldS[i] / MAXSPEED;
+    }
 }
 
 vector<double> MyAlgorithm::MeanPerColumn() const
@@ -93,6 +108,27 @@ double MyAlgorithm::Difference_Mean(int j, const vector<double>& Means, double r
     return r * (Xbest - Tf * M);
 }
 
+void MyAlgorithm::VerificationSolutionWithinInterval(vector<double>& tabNewP, int j, double add)
+{
+    if (tabNewP[j] + add <= _pbm.max_intervalle())
+    {
+        if(tabNewP[j] + add >= _pbm.min_intervalle())
+        {
+            tabNewP[j] += add;
+        }
+        else
+        {
+            int tamp=tabNewP[j]-_pbm.min_intervalle();
+            tabNewP[j]-=tamp*(rand() * 1.0 / RAND_MAX);
+        }
+    }
+    else
+    {
+        int tamp=_pbm.max_intervalle()-tabNewP[j];
+        tabNewP[j]+=tamp*(rand() * 1.0 / RAND_MAX);
+    }
+}
+
 void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)
 {
     Solution* newSolution = new Solution{*_solutions[k]};
@@ -101,10 +137,9 @@ void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)
     for (int j = 0; j < _setup.solution_size(); ++j)
     {
         double diffMean = Difference_Mean(j, Means, r);
-        if (tabNewSolution[j] + diffMean <= _pbm.max_intervalle() && tabNewSolution[j] + diffMean >= _pbm.min_intervalle())
-            tabNewSolution[j] += diffMean;
+        VerificationSolutionWithinInterval(tabNewSolution, j, diffMean);
     }
-
+    speedControl(_solutions[k]->solution(), tabNewSolution);
     newSolution->fitness();
 
     if (abs(newSolution->get_fitness()) < abs(_solutions[k]->get_fitness()))
@@ -125,6 +160,8 @@ void MyAlgorithm::Teaching(double r)
     }
 }
 
+
+
 void MyAlgorithm::learnFromPeer(int P, int Q, double r)
 {
     Solution* newP = new Solution{*_solutions[P]};
@@ -136,8 +173,7 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
         for (int j = 0; j < _setup.solution_size(); ++j)
         {
             double add = r * (tabNewP[j] - tabQ[j]);
-            if (tabNewP[j] + add <= _pbm.max_intervalle() && tabNewP[j] + add >= _pbm.min_intervalle())
-                tabNewP[j] += add;
+            VerificationSolutionWithinInterval(tabNewP,j,add);
         }
     }
     else
@@ -145,8 +181,7 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
         for (int j = 0; j < _setup.solution_size(); ++j)
         {
             double add = r * (tabQ[j] - tabNewP[j]);
-            if (tabNewP[j] + add <= _pbm.max_intervalle() && tabNewP[j] + add >= _pbm.min_intervalle())
-                tabNewP[j] += add;
+            VerificationSolutionWithinInterval(tabNewP,j,add);
         }
     }
     newP->fitness();
@@ -167,7 +202,7 @@ void MyAlgorithm::Learning(double r)
     }
 }
 
-void MyAlgorithm::evolution(int iter)
+void MyAlgorithm::evolution(int iter,Viewer& fenetre)
 {
     int i = 0;
     while (i < iter && _best_solution->get_fitness() != 0.0)
@@ -177,8 +212,13 @@ void MyAlgorithm::evolution(int iter)
         Learning(r);
         determineBestSolution();
         ++i;
-
-        cout << endl << "Fitness: " << _best_solution->get_fitness() << endl;
+        /** Affichage graphique*/
+        /*
+        fenetre.add(_best_solution->get_fitness());
+        fenetre.clear();
+        fenetre.afficheInit(); *//** Fin */
+        //delay(100);
+        cout << "\nFitness: " << _best_solution->get_fitness() << endl;
         cout << *_best_solution << endl;
     }
 }
@@ -191,7 +231,7 @@ void MyAlgorithm::UpdateBestSolutionOverall(Solution* &OverallBestSolution)
         *OverallBestSolution = *_best_solution;
 }
 
-void MyAlgorithm::run()
+void MyAlgorithm::run(Viewer& fenetre)
 {
     srand(static_cast<unsigned int>(time(NULL)));
 
@@ -202,9 +242,12 @@ void MyAlgorithm::run()
         initialize();
         evaluateFitness();
         determineBestSolution();
-        evolution(_setup.nb_evolution_steps());
+        evolution(_setup.nb_evolution_steps(),fenetre);
         UpdateBestSolutionOverall(OverallBestSolution);
-        if (OverallBestSolution->get_fitness() == 0.0) break;
+        if (OverallBestSolution->get_fitness() == 0.0) {
+            fenetre.waitUntilButton();
+            break;
+        }
     }
     _best_solution = OverallBestSolution;
 }

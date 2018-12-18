@@ -1,8 +1,44 @@
 #include "Problem.h"
 
-Problem::Problem(int dimension, fonction f, int min_intervalle, int max_intervalle):
-                _dimension{dimension}, _fonction{f}, _max_intervalle{max_intervalle}, _min_intervalle{min_intervalle}
-{}
+//Rosenbrock: -5,10 Rastrigin: -5,5 Ackley -32,32, Schwefel: -500, 500, Schaffer: -100,100 Weierstrass -5,5
+
+Problem::Problem(int dimension, fonction f):
+                _dimension{dimension},
+                _fonction{f},
+                _max_intervalle{},
+                _min_intervalle{} {
+switch (_fonction){
+        case Rosenbrock:
+            _max_intervalle=10;
+            _min_intervalle=-5;
+        break;
+
+        case Rastrigin:
+             _max_intervalle=5;
+            _min_intervalle=-5;
+        break;
+
+        case Ackley:
+             _max_intervalle=32;
+            _min_intervalle=-32;
+        break;
+
+        case Schwefel:
+             _max_intervalle=500;
+            _min_intervalle=-500;
+        break;
+
+        case Schaffer:
+             _max_intervalle=100;
+            _min_intervalle=-100;
+        break;
+
+        case Weierstrass:
+             _max_intervalle=5;
+            _min_intervalle=-5;
+        break;
+    }
+}
 
 Problem::~Problem()
 {}

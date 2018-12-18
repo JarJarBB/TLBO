@@ -33,12 +33,13 @@ class Solution
 
 		double& position(const int index); //retournera une position du tableau _solution
         void  position(const int index, const double value);
-
+        double generateDouble(int min, int max);
 
 	private:
         vector<double> _solution;
         double _current_fitness;
 		const Problem& _pbm;
+		void generateDoubleWithinInterval(double& min,double& max);
 };
 
 #endif // SOLUTION_H

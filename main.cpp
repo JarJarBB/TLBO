@@ -8,14 +8,17 @@ using namespace std;
 int main()
 {
     //cout << fixed << setprecision(30);
+    Viewer fenetre {800,600};
+    fenetre.openWindow();
 
-    SetUpParams setup{30, 1000, 40, 6};
+    SetUpParams setup{30, 100, 40, 6};
     const int taille_probleme = setup.solution_size();
-    Problem p{taille_probleme, Rastrigin, -5, 5};
+    Problem p{taille_probleme,Schwefel};
 
     MyAlgorithm algo{p, setup};
 
-    algo.run();
+    algo.run(fenetre);
+    fenetre.closeWindow();
 
     cout << endl << endl << "Fitness de la meilleure solution : " << algo.best_solution().get_fitness() << endl;
     cout << algo.best_solution() << endl << endl;
