@@ -171,6 +171,20 @@ void Solution::initialize()
 
 }
 
+Solution& Solution::operator*=(double factor)
+{
+    for (auto& i : _solution)
+        i *= factor;
+    return *this;
+}
+
+Solution Solution::operator*(double factor) const
+{
+    Solution S2{*this};
+    S2 *= factor;
+    return S2;
+}
+
 ostream& operator<<(ostream& os, const Solution& sol)
 {
     unsigned int i;

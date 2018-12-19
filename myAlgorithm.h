@@ -41,12 +41,14 @@ public:
     vector<double> MeanPerColumn() const;
     double Difference_Mean(int j, const vector<double>& Means, double r) const;
     void learnFromTeacher(int k, const vector<double>& Means, double r);
-    void Teaching(double r);
+    void TeachingPhase(double r);
     void learnFromPeer(int P, int Q, double r);
-    void Learning(double r);
+    void LearningPhase(double r);
     void UpdateBestSolutionOverall(Solution* &OverallBestSolution);
     void VerificationSolutionWithinInterval(vector<double>& tabNewP, int j,double add);
+    void VerificationSolutionWithinIntervalAfterFactor(vector<double>& tabNewP, int j, double factor); //For ScalingPhase
     void speedControl(const vector<double> &oldS, vector<double> &newS) const;
+    void ScalingPhase();
 
 
     const vector<Solution*>& solutions() const;

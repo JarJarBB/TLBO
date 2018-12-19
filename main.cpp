@@ -4,16 +4,16 @@
 
 using namespace std;
 //SetUpParams (unsigned int independent_runs = 30, unsigned int nb_evolution_steps = 2000000, unsigned int population_size = 40, unsigned int solution_size = 20);
-//Rosenbrock: -5,10 Rastrigin: -5,5 Ackley -32,32, Schwefel: -500, 500, Schaffer: -100,100 Weierstrass -5,5
+//Rosenbrock: -5,10 Rastrigin: -5,5 Ackley: -32,32, Schwefel: -500, 500, Schaffer: -100,100 Weierstrass: -5,5
 int main()
 {
     //cout << fixed << setprecision(30);
     Viewer fenetre {800,600};
     fenetre.openWindow();
 
-    SetUpParams setup{30, 100, 40, 6};
+    SetUpParams setup{30, 100, 40, 20};
     const int taille_probleme = setup.solution_size();
-    Problem p{taille_probleme,Schwefel};
+    Problem p{taille_probleme, Rastrigin};
 
     MyAlgorithm algo{p, setup};
 

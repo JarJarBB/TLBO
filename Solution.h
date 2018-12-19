@@ -22,6 +22,8 @@ class Solution
 		Solution& operator=  (const Solution& sol);
 		bool operator== (const Solution& sol) const;
 		bool operator!= (const Solution& sol) const;
+		Solution& operator*=(double factor); //added
+		Solution operator*(double factor) const; //added
 
 		void initialize();
 		void fitness();

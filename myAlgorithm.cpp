@@ -2,8 +2,11 @@
 #include <random>
 #include <ctime>
 
+int tabRandDiff[] = {1, 1, 2};
 const double MAXSPEED = 1.6;
-int tabRand[] = {1, 1, 2};
+const double SCALE = 2.0;
+const int ScaleTabSIZE = 4;
+double tabRandSCALE[] = {1.0 / SCALE, -1.0 / SCALE, SCALE, -SCALE};
 
 MyAlgorithm::MyAlgorithm(const Problem& pbm, SetUpParams& setup) :
             _setup{setup},
@@ -102,7 +105,7 @@ Solution& MyAlgorithm::best_solution() const
 double MyAlgorithm::Difference_Mean(int j, const vector<double>& Means, double r) const
 {
     double Xbest = _best_solution->solution()[j];
-    double Tf = tabRand[rand() % 3]; //'One' is twice as likely to be chosen as '2'
+    double Tf = tabRandDiff[rand() % 3]; //'One' is twice as likely to be chosen as '2'
     double M = Means[j];
 
     return r * (Xbest - Tf * M);
@@ -129,6 +132,28 @@ void MyAlgorithm::VerificationSolutionWithinInterval(vector<double>& tabNewP, in
     }
 }
 
+void MyAlgorithm::VerificationSolutionWithinIntervalAfterFactor(vector<double>& tabNewP, int j, double factor)
+{
+    if (tabNewP[j] * factor <= _pbm.max_intervalle())
+    {
+        if(tabNewP[j] * factor >= _pbm.min_intervalle())
+        {
+            tabNewP[j] *= factor;
+        }
+        else
+        {
+            int tamp = tabNewP[j] - _pbm.min_intervalle();
+            tabNewP[j] -= tamp * (rand() * 1.0 / RAND_MAX);
+        }
+    }
+    else
+    {
+        int tamp = _pbm.max_intervalle() - tabNewP[j];
+        tabNewP[j] += tamp * (rand() * 1.0 / RAND_MAX);
+    }
+}
+
+
 void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)
 {
     Solution* newSolution = new Solution{*_solutions[k]};
@@ -150,7 +175,7 @@ void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)
     else delete newSolution;
 }
 
-void MyAlgorithm::Teaching(double r)
+void MyAlgorithm::TeachingPhase(double r)
 {
     vector<double> Means = MeanPerColumn();
     for (int k = 0; k < _setup.population_size(); ++k)
@@ -159,8 +184,6 @@ void MyAlgorithm::Teaching(double r)
             learnFromTeacher(k, Means, r);
     }
 }
-
-
 
 void MyAlgorithm::learnFromPeer(int P, int Q, double r)
 {
@@ -193,12 +216,28 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
     else delete newP;
 }
 
-void MyAlgorithm::Learning(double r)
+void MyAlgorithm::LearningPhase(double r)
 {
     for (int k = 0; k < _setup.population_size(); ++k)
     {
         int Q = rand() % _setup.population_size();
         learnFromPeer(k, Q, r);
+    }
+}
+
+void MyAlgorithm::ScalingPhase()
+{
+    double factor;
+    for (auto i : _solutions)
+    {
+        Solution S2{*i};
+        factor = tabRandSCALE[rand() % ScaleTabSIZE];
+        for (int j = 0; j < _setup.solution_size(); ++j)
+            VerificationSolutionWithinIntervalAfterFactor(S2.solution(), j, factor);
+
+        S2.fitness();
+        if (abs(S2.get_fitness()) < abs(i->get_fitness()))
+            *i = S2;
     }
 }
 
@@ -208,8 +247,9 @@ void MyAlgorithm::evolution(int iter,Viewer& fenetre)
     while (i < iter && _best_solution->get_fitness() != 0.0)
     {
         double r = rand() * 1.0 / RAND_MAX;
-        Teaching(r);
-        Learning(r);
+        TeachingPhase(r);
+        LearningPhase(r);
+        ScalingPhase();
         determineBestSolution();
         ++i;
         /** Affichage graphique*/
