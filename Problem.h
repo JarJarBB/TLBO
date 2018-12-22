@@ -5,7 +5,7 @@
 
 using namespace std;
 
-enum fonction {Rosenbrock, Rastrigin, Ackley, Schwefel, Schaffer, Weierstrass};
+enum fonction {Rosenbrock = 0, Rastrigin, Ackley, Schwefel, Schaffer, Weierstrass};
 
 class Problem
 {
@@ -20,8 +20,8 @@ class Problem
 		bool operator== (const Problem& pbm) const;
 		bool operator!= (const Problem& pbm) const;
 
+        string name() const;
 		int dimension() const;
-		double LowerLimit, UpperLimit;
 		fonction func() const;
 
 		void max_intervalle (const int val);

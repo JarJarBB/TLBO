@@ -3,11 +3,11 @@
 //Rosenbrock: -5,10 Rastrigin: -5,5 Ackley -32,32, Schwefel: -500, 500, Schaffer: -100,100 Weierstrass -5,5
 
 Problem::Problem(int dimension, fonction f):
-                _dimension{dimension},
-                _fonction{f},
-                _max_intervalle{},
-                _min_intervalle{} {
-switch (_fonction){
+                _dimension{dimension}, _fonction{f},
+                _max_intervalle{}, _min_intervalle{}
+{
+    switch (_fonction)
+    {
         case Rosenbrock:
             _max_intervalle=10;
             _min_intervalle=-5;
@@ -51,6 +51,36 @@ fonction Problem::func() const
 int Problem::dimension() const
 {
     return _dimension;
+}
+
+string Problem::name() const
+{
+    switch (_fonction)
+    {
+        case Rosenbrock:
+            return "Rosenbrock";
+        break;
+
+        case Rastrigin:
+            return "Rastrigin";
+        break;
+
+        case Ackley:
+            return "Ackley";
+        break;
+
+        case Schwefel:
+            return "Schwefel";
+        break;
+
+        case Schaffer:
+            return "Schaffer";
+        break;
+
+        case Weierstrass:
+            return "Weierstrass";
+        break;
+    }
 }
 
 const int Problem::max_intervalle () const

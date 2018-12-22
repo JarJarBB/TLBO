@@ -1,26 +1,68 @@
 #include <iostream>
-#include "myAlgorithm.h"
+#include <fstream>
 #include <iomanip>
-
+#include "myAlgorithm.h"
 using namespace std;
-//SetUpParams (unsigned int independent_runs = 30, unsigned int nb_evolution_steps = 2000000, unsigned int population_size = 40, unsigned int solution_size = 20);
-//Rosenbrock: -5,10 Rastrigin: -5,5 Ackley: -32,32, Schwefel: -500, 500, Schaffer: -100,100 Weierstrass: -5,5
+//SetUpParams (independent_runs = 30, nb_evolution_steps = 50000, population_size = 40, solution_size = 20);
+//Rosenbrock: -5,10 Rastrigin: -5,5 Ackley: -32,32, Schwefel(420.968746): -500, 500, Schaffer: -100,100 Weierstrass: -5,5
+
+SetUpParams setup{30, 32, 40, 20};
+
+void TLBO(fonction f);
+void TLBOfile(ostream& outputFile);
+
+
 int main()
 {
-    //cout << fixed << setprecision(30);
-    Viewer fenetre {800,600};
+    TLBO(Schaffer);
+
+   // ofstream outputFile{"aTLBO201819.txt"}; TLBOfile(outputFile);
+
+    return 0;
+}
+
+
+void TLBO(fonction f)
+{
+    //cout << fixed << setprecision(16);
+    Viewer fenetre {};
     fenetre.openWindow();
-
-    SetUpParams setup{30, 100, 40, 20};
     const int taille_probleme = setup.solution_size();
-    Problem p{taille_probleme, Rastrigin};
-
+    Problem p{taille_probleme, f};
     MyAlgorithm algo{p, setup};
+    algo.run(fenetre);
+    fenetre.closeWindow();
+}
 
+void TLBO(fonction f, ostream& outputFile)
+{
+    //cout << fixed << setprecision(16);
+    NoViewer fenetre {};
+    fenetre.openWindow();
+    const int taille_probleme = setup.solution_size();
+    Problem p{taille_probleme, f};
+    MyAlgorithm algo{p, setup};
     algo.run(fenetre);
     fenetre.closeWindow();
 
-    cout << endl << endl << "Fitness de la meilleure solution : " << algo.best_solution().get_fitness() << endl;
-    cout << algo.best_solution() << endl << endl;
-    cout << setup << endl;
+    algo.outputSummary(outputFile);
+}
+
+void TLBOfile(ostream& outputFile)
+{
+    outputFile << endl;
+    outputFile << "TBLO 201819 - Vanulli A. - Vix P. - Freyburger H. - Chevalier P.\n" << endl;
+    outputFile << setup << endl;
+    TLBO(Rosenbrock, outputFile);
+    outputFile << endl;
+    TLBO(Rastrigin, outputFile);
+    outputFile << endl;
+    TLBO(Ackley, outputFile);
+    outputFile << endl;
+    TLBO(Schwefel, outputFile);
+    outputFile << endl;
+    TLBO(Schaffer, outputFile);
+    outputFile << endl;
+    TLBO(Weierstrass, outputFile);
+    outputFile << endl;
 }

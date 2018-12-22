@@ -69,7 +69,7 @@ double fonctionSchwefel(const std::vector<double> &X)
     for (auto Xi : X)
         sum += Xi * sin(std::sqrt(std::abs(Xi)));
 
-    return 418.9829 * X.size() - sum;
+    return 418.982887272433799807913601398 * X.size() - sum;
 }
 
 double fonctionSchaffer(const std::vector<double> &X)
@@ -102,7 +102,6 @@ double fonctionWeierstrass(const std::vector<double> &X)
 
     for (int k = 0; k <= kMax; ++k)
         sum3 += std::pow(a, k) * std::cos( 2.0 * pi * std::pow(b, k) * 0.5 );
-
 
     return sum1 - X.size() * sum3;
 }

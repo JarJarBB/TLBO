@@ -1,7 +1,6 @@
 #ifndef INC_METAHEURISTIC
 #define INC_METAHEURISTIC
 #include <iostream>
-#include <fstream>
 #include <cmath>
 #include <vector>
 #include "SetUpParams.h"
@@ -21,6 +20,7 @@ private:
     unsigned int _upper_cost,_lower_cost; // lower and upper fitness of individuals in population
 
     // Ces variables ont ete ajoutees
+    vector<double> _results;
     Solution* _best_solution;
     const Problem& _pbm;
 
@@ -46,16 +46,21 @@ public:
     void LearningPhase(double r);
     void UpdateBestSolutionOverall(Solution* &OverallBestSolution);
     void VerificationSolutionWithinInterval(vector<double>& tabNewP, int j,double add);
-    void VerificationSolutionWithinIntervalAfterFactor(vector<double>& tabNewP, int j, double factor); //For ScalingPhase
+    void VerificationSolutionWithinIntervalAfterFactor(vector<double>& tabNewP, int j, double factor);//For ScalingPhase
+    double valueAdaptedToPbmInterval(double original, double current);
     void speedControl(const vector<double> &oldS, vector<double> &newS) const;
     void ScalingPhase();
-
+    void TutorPhase();
+    void outputSummary(ostream& outputFile);
 
     const vector<Solution*>& solutions() const;
     unsigned int upper_cost() const;
     unsigned int lower_cost() const;
     Solution& solution(const unsigned int index) const;
     double fitness(const unsigned int index) const;
+    const vector<double>& results() const;
+    double meanResults() const;
+    double sdResults() const;
 
 
     double best_cost() const;

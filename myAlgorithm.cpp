@@ -3,19 +3,19 @@
 #include <ctime>
 
 int tabRandDiff[] = {1, 1, 2};
-const double MAXSPEED = 1.6;
-const double SCALE = 2.0;
-const int ScaleTabSIZE = 4;
-double tabRandSCALE[] = {1.0 / SCALE, -1.0 / SCALE, SCALE, -SCALE};
+const double MAXSPEED = 1.6; // MAXSPEED > 1
+const double SCALE_MIN = 1.0; // SCALE_MIN > 1
+const double SCALE_MAX = 200.0; // SCALE_MAX > SCALE_MIN
 
 MyAlgorithm::MyAlgorithm(const Problem& pbm, SetUpParams& setup) :
             _setup{setup},
             _solutions(setup.population_size()),
             _best_solution{nullptr},
-            _pbm{pbm}
+            _pbm{pbm}, _results{}
 {
     for (auto& i : _solutions)
         i = new Solution{pbm};
+    _results.reserve(_setup.population_size());
 }
 
 MyAlgorithm::~MyAlgorithm()
@@ -30,6 +30,11 @@ void MyAlgorithm::initialize()
 {
     for (auto i : _solutions)
         i->initialize(); // i->Solution::initialize(MAX);
+}
+
+double generateDouble(double min = 0.0, double max = 1.0)
+{
+    return (rand() * 1.0 / (1.0 * RAND_MAX)) * (max - min) + min;
 }
 
 void MyAlgorithm::speedControl(const vector<double> &oldS, vector<double> &newS) const
@@ -83,14 +88,14 @@ void MyAlgorithm::determineBestSolution()
     if (_solutions.size())
     {
         int k = rand() % _setup.population_size();
-        double min = _solutions[k]->get_fitness();
+        double minimum = _solutions[k]->get_fitness();
         _best_solution = _solutions[k];
 
         for (auto i : _solutions)
         {
-            if (abs(i->get_fitness()) < abs(min))
+            if (abs(i->get_fitness()) < abs(minimum))
             {
-                min = i->get_fitness();
+                minimum = i->get_fitness();
                 _best_solution = i;
             }
         }
@@ -100,6 +105,33 @@ void MyAlgorithm::determineBestSolution()
 Solution& MyAlgorithm::best_solution() const
 {
     return *_best_solution;
+}
+
+const vector<double>& MyAlgorithm::results() const
+{
+    return _results;
+}
+
+double MyAlgorithm::meanResults() const
+{
+    double sum = accumulate(_results.begin(), _results.end(), 0.0);
+    return sum / _results.size();
+}
+
+double MyAlgorithm::sdResults() const
+{
+    double mean = meanResults(), sum = 0.0;
+    for (int i = 0; i < _results.size(); ++i)
+       sum += (_results[i] - mean) * (_results[i] - mean);
+    return sqrt( sum / _results.size() );
+}
+
+void MyAlgorithm::outputSummary(ostream& outputFile)
+{
+    outputFile << "Fonction : " << _pbm.name() << endl;
+    outputFile << "Meilleure fitness : " << _best_solution->get_fitness() << " --- Solution :" << endl;
+    outputFile << *_best_solution << endl;
+    outputFile << "Moyenne : " << meanResults() << " Ecart-type : " << sdResults() << endl;
 }
 
 double MyAlgorithm::Difference_Mean(int j, const vector<double>& Means, double r) const
@@ -153,6 +185,37 @@ void MyAlgorithm::VerificationSolutionWithinIntervalAfterFactor(vector<double>& 
     }
 }
 
+unsigned int absMinimumOfArray(double* t, int d)
+{
+    unsigned int pos = 0;
+    for (int i = 1; i < d; ++i)
+        if (abs(t[i]) < abs(t[pos])) pos = i;
+    return pos;
+}
+
+double MyAlgorithm::valueAdaptedToPbmInterval(double original, double current)
+{
+    double val;
+    if (current <= _pbm.max_intervalle())
+    {
+        if(current >= _pbm.min_intervalle())
+        {
+            val = current;
+        }
+        else
+        {
+            int tamp = original - _pbm.min_intervalle();
+            val = original - tamp * (rand() * 1.0 / RAND_MAX);
+        }
+    }
+    else
+    {
+        int tamp = _pbm.max_intervalle() - original;
+        val = original + tamp * (rand() * 1.0 / RAND_MAX);
+    }
+
+    return val;
+}
 
 void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)
 {
@@ -225,8 +288,14 @@ void MyAlgorithm::LearningPhase(double r)
     }
 }
 
-void MyAlgorithm::ScalingPhase()
+void MyAlgorithm::ScalingPhase() //add ScalingPhase1() and ScalingPhase2()
 {
+    double SCALE;
+    if (rand() % 2 == 0) SCALE = generateDouble(SCALE_MIN, SCALE_MAX);
+    else SCALE = generateDouble(SCALE_MIN, SCALE_MIN + generateDouble(0.0, 0.0001)); //rand() -> 0.1, 0.01, 0.001, etc.
+    const int ScaleTabSIZE = 4;
+    double tabRandSCALE[] = {1.0 / SCALE, -1.0 / SCALE, SCALE, -SCALE};
+
     double factor;
     for (auto i : _solutions)
     {
@@ -241,23 +310,60 @@ void MyAlgorithm::ScalingPhase()
     }
 }
 
+void MyAlgorithm::TutorPhase()
+{
+    double SCALE;
+    int r = rand() % 3;
+    if (r == 0) SCALE = generateDouble(SCALE_MIN, SCALE_MAX);
+    else if (r == 1) SCALE = generateDouble(SCALE_MIN, SCALE_MIN + generateDouble(0.0, 1.0));
+    else SCALE = generateDouble(SCALE_MIN, SCALE_MIN + generateDouble(0.0, 0.00001)); //rand() -> 0.1, 0.01, 0.001, etc.
+
+    const int ScaleTabSIZE = 4;
+    double tabRandSCALE[] = {SCALE, 1.0 / SCALE, -1.0 / SCALE, -SCALE};
+
+    vector<double>& trainee{_best_solution->solution()};
+
+    double values[ScaleTabSIZE + 1];
+    double fitness[ScaleTabSIZE + 1];
+
+    for (int j = 0; j < _setup.solution_size(); ++j)
+    {
+        values[0] = trainee[j];
+
+        for (int i = 1; i < ScaleTabSIZE + 1; ++i)
+            values[i] = valueAdaptedToPbmInterval(values[0], tabRandSCALE[i - 1] * values[0]);
+
+        for (int i = 0; i < ScaleTabSIZE + 1; ++i)
+        {
+            trainee[j] = values[i];
+            _best_solution->fitness();
+            fitness[i] = _best_solution->get_fitness();
+        }
+        int posMinFitness = absMinimumOfArray(fitness, ScaleTabSIZE + 1);
+        trainee[j] = values[posMinFitness];
+    }
+
+    _best_solution->fitness();
+}
+
 void MyAlgorithm::evolution(int iter,Viewer& fenetre)
 {
     int i = 0;
     while (i < iter && _best_solution->get_fitness() != 0.0)
     {
         double r = rand() * 1.0 / RAND_MAX;
+        /*TutorPhase();*/
         TeachingPhase(r);
         LearningPhase(r);
-        ScalingPhase();
+        /*ScalingPhase();*/
         determineBestSolution();
         ++i;
         /** Affichage graphique*/
-        /*
         fenetre.add(_best_solution->get_fitness());
         fenetre.clear();
-        fenetre.afficheInit(); *//** Fin */
+        fenetre.afficheInit();
         //delay(100);
+        /** Fin */
         cout << "\nFitness: " << _best_solution->get_fitness() << endl;
         cout << *_best_solution << endl;
     }
@@ -282,12 +388,17 @@ void MyAlgorithm::run(Viewer& fenetre)
         initialize();
         evaluateFitness();
         determineBestSolution();
-        evolution(_setup.nb_evolution_steps(),fenetre);
+        evolution(_setup.nb_evolution_steps(), fenetre);
+        _results.push_back(_best_solution->get_fitness());
         UpdateBestSolutionOverall(OverallBestSolution);
-        if (OverallBestSolution->get_fitness() == 0.0) {
-            fenetre.waitUntilButton();
-            break;
-        }
     }
     _best_solution = OverallBestSolution;
+
+    cout << "\n---------------------------------------------------------\n";
+    cout << "Fitness de la meilleure solution : " << _best_solution->get_fitness() << endl;
+    cout << *_best_solution << "\n" << endl;
+    cout << "Moyenne : " << meanResults() << " Ecart-type : " << sdResults() << "\n" << endl;
+    cout << _setup << endl;
+    cout << "Probleme optimise : la fonction " << _pbm.name() << endl;
+    cout << "---------------------------------------------------------\n";
 }
