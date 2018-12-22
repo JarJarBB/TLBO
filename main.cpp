@@ -6,7 +6,7 @@ using namespace std;
 //SetUpParams (independent_runs = 30, nb_evolution_steps = 50000, population_size = 40, solution_size = 20);
 //Rosenbrock: -5,10 Rastrigin: -5,5 Ackley: -32,32, Schwefel(420.968746): -500, 500, Schaffer: -100,100 Weierstrass: -5,5
 
-SetUpParams setup{30, 32, 40, 20};
+SetUpParams setup{1, 1000, 40, 20};
 
 void TLBO(fonction f);
 void TLBOfile(ostream& outputFile);
@@ -14,9 +14,9 @@ void TLBOfile(ostream& outputFile);
 
 int main()
 {
-    TLBO(Schaffer);
+    TLBO(Schwefel);
 
-   // ofstream outputFile{"aTLBO201819.txt"}; TLBOfile(outputFile);
+    //ofstream outputFile{"aTLBO201819.txt"}; TLBOfile(outputFile);
 
     return 0;
 }

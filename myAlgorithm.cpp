@@ -4,8 +4,8 @@
 
 int tabRandDiff[] = {1, 1, 2};
 const double MAXSPEED = 1.6; // MAXSPEED > 1
-const double SCALE_MIN = 1.0; // SCALE_MIN > 1
-const double SCALE_MAX = 200.0; // SCALE_MAX > SCALE_MIN
+const double SCALE_MIN = 1.0; // SCALE_MIN >= 1
+const double SCALE_MAX = 200.0; // SCALE_MAX > SCALE_MIN && SCALE_MAX > 100
 
 MyAlgorithm::MyAlgorithm(const Problem& pbm, SetUpParams& setup) :
             _setup{setup},
@@ -288,7 +288,7 @@ void MyAlgorithm::LearningPhase(double r)
     }
 }
 
-void MyAlgorithm::ScalingPhase() //add ScalingPhase1() and ScalingPhase2()
+void MyAlgorithm::ScalingPhase() //add ScalingPhase1() and ScalingPhase2() OR MAYBE NOT!!!
 {
     double SCALE;
     if (rand() % 2 == 0) SCALE = generateDouble(SCALE_MIN, SCALE_MAX);
@@ -313,11 +313,15 @@ void MyAlgorithm::ScalingPhase() //add ScalingPhase1() and ScalingPhase2()
 void MyAlgorithm::TutorPhase()
 {
     double SCALE;
-    int r = rand() % 3;
-    if (r == 0) SCALE = generateDouble(SCALE_MIN, SCALE_MAX);
-    else if (r == 1) SCALE = generateDouble(SCALE_MIN, SCALE_MIN + generateDouble(0.0, 1.0));
-    else SCALE = generateDouble(SCALE_MIN, SCALE_MIN + generateDouble(0.0, 0.00001)); //rand() -> 0.1, 0.01, 0.001, etc.
-
+    int choice = rand() % 4;
+    if (choice == 0) SCALE = generateDouble(SCALE_MIN, SCALE_MAX);
+    else if (choice == 1) SCALE = generateDouble(SCALE_MIN, SCALE_MAX / 10.0);
+    else if (choice == 2) SCALE = generateDouble(SCALE_MIN, SCALE_MAX / 100.0);
+    else
+    {
+        double d = pow(10.0, rand() % 8 + 1); //increase the '8' for more precision after the comma
+        SCALE = generateDouble(SCALE_MIN, SCALE_MIN + generateDouble(1.0 / d, 10.0 / d)); //rand() -> 0.1, 0.01, 0.001, etc.
+    }
     const int ScaleTabSIZE = 4;
     double tabRandSCALE[] = {SCALE, 1.0 / SCALE, -1.0 / SCALE, -SCALE};
 
@@ -346,13 +350,13 @@ void MyAlgorithm::TutorPhase()
     _best_solution->fitness();
 }
 
-void MyAlgorithm::evolution(int iter,Viewer& fenetre)
+void MyAlgorithm::evolution(int iter, Viewer& fenetre)
 {
     int i = 0;
     while (i < iter && _best_solution->get_fitness() != 0.0)
     {
         double r = rand() * 1.0 / RAND_MAX;
-        /*TutorPhase();*/
+        TutorPhase();
         TeachingPhase(r);
         LearningPhase(r);
         /*ScalingPhase();*/
