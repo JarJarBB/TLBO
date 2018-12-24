@@ -45,22 +45,23 @@ public:
     void learnFromPeer(int P, int Q, double r);
     void LearningPhase(double r);
     void UpdateBestSolutionOverall(Solution* &OverallBestSolution);
-    void VerificationSolutionWithinInterval(vector<double>& tabNewP, int j,double add);
-    void VerificationSolutionWithinIntervalAfterFactor(vector<double>& tabNewP, int j, double factor);//For ScalingPhase
+    void changeSolutionWithinInterval(vector<double>& tabNewP, int j,double add);
+    void changeSolutionWithinIntervalAfterFactor(vector<double>& tabNewP, int j, double factor);
     double valueAdaptedToPbmInterval(double original, double current);
     void speedControl(const vector<double> &oldS, vector<double> &newS) const;
-    void ScalingPhase();
+    void solutionTranported(int pos);
+    void TransportationPhase();
     void TutorPhase();
     void outputSummary(ostream& outputFile);
+    const vector<double>& results() const;
+    double meanResults() const;
+    double sdResults() const;
 
     const vector<Solution*>& solutions() const;
     unsigned int upper_cost() const;
     unsigned int lower_cost() const;
     Solution& solution(const unsigned int index) const;
     double fitness(const unsigned int index) const;
-    const vector<double>& results() const;
-    double meanResults() const;
-    double sdResults() const;
 
 
     double best_cost() const;

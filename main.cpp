@@ -2,11 +2,14 @@
 #include <fstream>
 #include <iomanip>
 #include "myAlgorithm.h"
+#include "ViewerBGI.h"
+
 using namespace std;
-//SetUpParams (independent_runs = 30, nb_evolution_steps = 50000, population_size = 40, solution_size = 20);
+
+//SetUpParams (independent_runs = 30, nb_evolution_steps = 9000, population_size = 40, solution_size = 20);
 //Rosenbrock: -5,10 Rastrigin: -5,5 Ackley: -32,32, Schwefel(420.968746): -500, 500, Schaffer: -100,100 Weierstrass: -5,5
 
-SetUpParams setup{1, 1000, 40, 20};
+SetUpParams setup{2, 400, 40, 20};
 
 void TLBO(fonction f);
 void TLBOfile(ostream& outputFile);
@@ -25,7 +28,7 @@ int main()
 void TLBO(fonction f)
 {
     //cout << fixed << setprecision(16);
-    Viewer fenetre {};
+    ViewerBGI fenetre {};
     fenetre.openWindow();
     const int taille_probleme = setup.solution_size();
     Problem p{taille_probleme, f};
@@ -37,7 +40,7 @@ void TLBO(fonction f)
 void TLBO(fonction f, ostream& outputFile)
 {
     //cout << fixed << setprecision(16);
-    NoViewer fenetre {};
+    Viewer fenetre {};
     fenetre.openWindow();
     const int taille_probleme = setup.solution_size();
     Problem p{taille_probleme, f};
@@ -50,19 +53,13 @@ void TLBO(fonction f, ostream& outputFile)
 
 void TLBOfile(ostream& outputFile)
 {
+    outputFile << "\nTLBO 201819 - Vanulli A. - Vix P. - Freyburger H. - Chevalier P.\n" << endl;
+    outputFile << setup;
     outputFile << endl;
-    outputFile << "TBLO 201819 - Vanulli A. - Vix P. - Freyburger H. - Chevalier P.\n" << endl;
-    outputFile << setup << endl;
-    TLBO(Rosenbrock, outputFile);
-    outputFile << endl;
-    TLBO(Rastrigin, outputFile);
-    outputFile << endl;
-    TLBO(Ackley, outputFile);
-    outputFile << endl;
-    TLBO(Schwefel, outputFile);
-    outputFile << endl;
-    TLBO(Schaffer, outputFile);
-    outputFile << endl;
+    TLBO(Rosenbrock, outputFile); outputFile << endl;
+    TLBO(Rastrigin, outputFile); outputFile << endl;
+    TLBO(Ackley, outputFile); outputFile << endl;
+    TLBO(Schwefel, outputFile); outputFile << endl;
+    TLBO(Schaffer, outputFile); outputFile << endl;
     TLBO(Weierstrass, outputFile);
-    outputFile << endl;
 }

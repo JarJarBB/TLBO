@@ -6,6 +6,9 @@ int tabRandDiff[] = {1, 1, 2};
 const double MAXSPEED = 1.6; // MAXSPEED > 1
 const double SCALE_MIN = 1.0; // SCALE_MIN >= 1
 const double SCALE_MAX = 200.0; // SCALE_MAX > SCALE_MIN && SCALE_MAX > 100
+const double PM = 0.1; // Mutation rate
+const int SIZE_CHOICE_INTERVAL = 6;
+double tabChoiceInterval[SIZE_CHOICE_INTERVAL] = {3, 3, 3, 2, 1, 0};
 
 MyAlgorithm::MyAlgorithm(const Problem& pbm, SetUpParams& setup) :
             _setup{setup},
@@ -26,30 +29,26 @@ MyAlgorithm::~MyAlgorithm()
     delete _best_solution;
 }
 
-void MyAlgorithm::initialize()
-{
-    for (auto i : _solutions)
-        i->initialize(); // i->Solution::initialize(MAX);
-}
-
 double generateDouble(double min = 0.0, double max = 1.0)
 {
     return (rand() * 1.0 / (1.0 * RAND_MAX)) * (max - min) + min;
 }
 
-void MyAlgorithm::speedControl(const vector<double> &oldS, vector<double> &newS) const
+void MyAlgorithm::initialize()
 {
-    for (int i = 0; i < oldS.size(); ++i)
-    {
-        double signe;
-        if (newS[i] / oldS[i] >= 0.0) signe = 1.0;
-        else signe = -1.0;
+    for (auto i : _solutions)
+        i->initialize(); // i->Solution::initialize();
+}
 
-        if (abs(newS[i]) > abs(oldS[i] * MAXSPEED))
-            newS[i] = signe * oldS[i] * MAXSPEED;
-        else if (abs(newS[i]) < abs(oldS[i] / MAXSPEED))
-            newS[i] = signe * oldS[i] / MAXSPEED;
-    }
+void MyAlgorithm::evaluateFitness()
+{
+    for(auto i : _solutions)
+        i->fitness();
+}
+
+const vector<Solution*>& MyAlgorithm::solutions() const
+{
+    return _solutions;
 }
 
 vector<double> MyAlgorithm::MeanPerColumn() const
@@ -72,17 +71,6 @@ vector<double> MyAlgorithm::MeanPerColumn() const
     return Means;
 }
 
-const vector<Solution*>& MyAlgorithm::solutions() const
-{
-    return _solutions;
-}
-
-void MyAlgorithm::evaluateFitness()
-{
-    for(auto i : _solutions)
-        i->fitness();
-}
-
 void MyAlgorithm::determineBestSolution()
 {
     if (_solutions.size())
@@ -102,9 +90,117 @@ void MyAlgorithm::determineBestSolution()
     }
 }
 
+void MyAlgorithm::UpdateBestSolutionOverall(Solution* &OverallBestSolution)
+{
+    if (!OverallBestSolution)
+        OverallBestSolution = new Solution{*_best_solution};
+    else if (abs(OverallBestSolution->get_fitness()) > abs(_best_solution->get_fitness()))
+        *OverallBestSolution = *_best_solution;
+}
+
 Solution& MyAlgorithm::best_solution() const
 {
     return *_best_solution;
+}
+
+double MyAlgorithm::Difference_Mean(int j, const vector<double>& Means, double r) const
+{
+    double Xbest = _best_solution->solution()[j];
+    double Tf = tabRandDiff[rand() % 3]; //'One' is twice as likely to be chosen as '2'
+    double M = Means[j];
+
+    return r * (Xbest - Tf * M);
+}
+
+double MyAlgorithm::valueAdaptedToPbmInterval(double original, double current)
+{
+    double val;
+    if (current <= _pbm.max_intervalle())
+    {
+        if(current >= _pbm.min_intervalle())
+        {
+            val = current;
+        }
+        else
+        {
+            int tamp = original - _pbm.min_intervalle();
+            val = original - tamp * (rand() * 1.0 / RAND_MAX);
+        }
+    }
+    else
+    {
+        int tamp = _pbm.max_intervalle() - original;
+        val = original + tamp * (rand() * 1.0 / RAND_MAX);
+    }
+
+    return val;
+}
+
+void MyAlgorithm::changeSolutionWithinInterval(vector<double>& tabNewP, int j, double add)
+{
+    tabNewP[j] = valueAdaptedToPbmInterval(tabNewP[j], tabNewP[j] + add);
+}
+
+void MyAlgorithm::changeSolutionWithinIntervalAfterFactor(vector<double>& tabNewP, int j, double factor)
+{
+    tabNewP[j] = valueAdaptedToPbmInterval(tabNewP[j], tabNewP[j] * factor);
+}
+
+unsigned int absMinimumOfArray(double* t, int d)
+{
+    unsigned int pos = 0;
+    for (int i = 1; i < d; ++i)
+        if (abs(t[i]) < abs(t[pos])) pos = i;
+
+    return pos;
+}
+
+double GenerateScale(int choiceInterval = -1)
+{
+    double SCALE;
+    if (choiceInterval == -1) choiceInterval = rand() % 4;
+
+    if (choiceInterval == 0) SCALE = generateDouble(SCALE_MIN, SCALE_MAX);
+    else if (choiceInterval == 1) SCALE = generateDouble(SCALE_MIN, SCALE_MAX / 10.0);
+    else if (choiceInterval == 2) SCALE = generateDouble(SCALE_MIN, SCALE_MAX / 100.0);
+    else
+    {
+        double d = pow(10.0, rand() % 8 + 1); //increase the '8' for more precision after the comma
+        SCALE = generateDouble(SCALE_MIN, SCALE_MIN + generateDouble(1.0 / d, 10.0 / d));
+    }
+
+    return SCALE;
+}
+
+double GenerateScaleWithType(int choiceInterval = -1, int type = -1)
+{
+    if (type == -1) type = rand() % 4;
+    switch (type)
+    {
+        case 0: return 1.0 / GenerateScale(choiceInterval);
+                break;
+        case 1: return -1.0 / GenerateScale(choiceInterval);
+                break;
+        case 2: return GenerateScale(choiceInterval);
+                break;
+        default: return -GenerateScale(choiceInterval);
+                break;
+    }
+}
+
+void MyAlgorithm::speedControl(const vector<double> &oldS, vector<double> &newS) const
+{
+    for (int i = 0; i < oldS.size(); ++i)
+    {
+        double signe;
+        if (newS[i] / oldS[i] >= 0.0) signe = 1.0;
+        else signe = -1.0;
+
+        if (abs(newS[i]) > abs(oldS[i] * MAXSPEED))
+            newS[i] = signe * oldS[i] * MAXSPEED;
+        else if (abs(newS[i]) < abs(oldS[i] / MAXSPEED))
+            newS[i] = signe * oldS[i] / MAXSPEED;
+    }
 }
 
 const vector<double>& MyAlgorithm::results() const
@@ -134,89 +230,6 @@ void MyAlgorithm::outputSummary(ostream& outputFile)
     outputFile << "Moyenne : " << meanResults() << " Ecart-type : " << sdResults() << endl;
 }
 
-double MyAlgorithm::Difference_Mean(int j, const vector<double>& Means, double r) const
-{
-    double Xbest = _best_solution->solution()[j];
-    double Tf = tabRandDiff[rand() % 3]; //'One' is twice as likely to be chosen as '2'
-    double M = Means[j];
-
-    return r * (Xbest - Tf * M);
-}
-
-void MyAlgorithm::VerificationSolutionWithinInterval(vector<double>& tabNewP, int j, double add)
-{
-    if (tabNewP[j] + add <= _pbm.max_intervalle())
-    {
-        if(tabNewP[j] + add >= _pbm.min_intervalle())
-        {
-            tabNewP[j] += add;
-        }
-        else
-        {
-            int tamp=tabNewP[j]-_pbm.min_intervalle();
-            tabNewP[j]-=tamp*(rand() * 1.0 / RAND_MAX);
-        }
-    }
-    else
-    {
-        int tamp=_pbm.max_intervalle()-tabNewP[j];
-        tabNewP[j]+=tamp*(rand() * 1.0 / RAND_MAX);
-    }
-}
-
-void MyAlgorithm::VerificationSolutionWithinIntervalAfterFactor(vector<double>& tabNewP, int j, double factor)
-{
-    if (tabNewP[j] * factor <= _pbm.max_intervalle())
-    {
-        if(tabNewP[j] * factor >= _pbm.min_intervalle())
-        {
-            tabNewP[j] *= factor;
-        }
-        else
-        {
-            int tamp = tabNewP[j] - _pbm.min_intervalle();
-            tabNewP[j] -= tamp * (rand() * 1.0 / RAND_MAX);
-        }
-    }
-    else
-    {
-        int tamp = _pbm.max_intervalle() - tabNewP[j];
-        tabNewP[j] += tamp * (rand() * 1.0 / RAND_MAX);
-    }
-}
-
-unsigned int absMinimumOfArray(double* t, int d)
-{
-    unsigned int pos = 0;
-    for (int i = 1; i < d; ++i)
-        if (abs(t[i]) < abs(t[pos])) pos = i;
-    return pos;
-}
-
-double MyAlgorithm::valueAdaptedToPbmInterval(double original, double current)
-{
-    double val;
-    if (current <= _pbm.max_intervalle())
-    {
-        if(current >= _pbm.min_intervalle())
-        {
-            val = current;
-        }
-        else
-        {
-            int tamp = original - _pbm.min_intervalle();
-            val = original - tamp * (rand() * 1.0 / RAND_MAX);
-        }
-    }
-    else
-    {
-        int tamp = _pbm.max_intervalle() - original;
-        val = original + tamp * (rand() * 1.0 / RAND_MAX);
-    }
-
-    return val;
-}
-
 void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)
 {
     Solution* newSolution = new Solution{*_solutions[k]};
@@ -225,7 +238,7 @@ void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)
     for (int j = 0; j < _setup.solution_size(); ++j)
     {
         double diffMean = Difference_Mean(j, Means, r);
-        VerificationSolutionWithinInterval(tabNewSolution, j, diffMean);
+        changeSolutionWithinInterval(tabNewSolution, j, diffMean);
     }
     speedControl(_solutions[k]->solution(), tabNewSolution);
     newSolution->fitness();
@@ -259,7 +272,7 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
         for (int j = 0; j < _setup.solution_size(); ++j)
         {
             double add = r * (tabNewP[j] - tabQ[j]);
-            VerificationSolutionWithinInterval(tabNewP,j,add);
+            changeSolutionWithinInterval(tabNewP, j, add);
         }
     }
     else
@@ -267,7 +280,7 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
         for (int j = 0; j < _setup.solution_size(); ++j)
         {
             double add = r * (tabQ[j] - tabNewP[j]);
-            VerificationSolutionWithinInterval(tabNewP,j,add);
+            changeSolutionWithinInterval(tabNewP, j, add);
         }
     }
     newP->fitness();
@@ -288,40 +301,9 @@ void MyAlgorithm::LearningPhase(double r)
     }
 }
 
-void MyAlgorithm::ScalingPhase() //add ScalingPhase1() and ScalingPhase2() OR MAYBE NOT!!!
-{
-    double SCALE;
-    if (rand() % 2 == 0) SCALE = generateDouble(SCALE_MIN, SCALE_MAX);
-    else SCALE = generateDouble(SCALE_MIN, SCALE_MIN + generateDouble(0.0, 0.0001)); //rand() -> 0.1, 0.01, 0.001, etc.
-    const int ScaleTabSIZE = 4;
-    double tabRandSCALE[] = {1.0 / SCALE, -1.0 / SCALE, SCALE, -SCALE};
-
-    double factor;
-    for (auto i : _solutions)
-    {
-        Solution S2{*i};
-        factor = tabRandSCALE[rand() % ScaleTabSIZE];
-        for (int j = 0; j < _setup.solution_size(); ++j)
-            VerificationSolutionWithinIntervalAfterFactor(S2.solution(), j, factor);
-
-        S2.fitness();
-        if (abs(S2.get_fitness()) < abs(i->get_fitness()))
-            *i = S2;
-    }
-}
-
 void MyAlgorithm::TutorPhase()
 {
-    double SCALE;
-    int choice = rand() % 4;
-    if (choice == 0) SCALE = generateDouble(SCALE_MIN, SCALE_MAX);
-    else if (choice == 1) SCALE = generateDouble(SCALE_MIN, SCALE_MAX / 10.0);
-    else if (choice == 2) SCALE = generateDouble(SCALE_MIN, SCALE_MAX / 100.0);
-    else
-    {
-        double d = pow(10.0, rand() % 8 + 1); //increase the '8' for more precision after the comma
-        SCALE = generateDouble(SCALE_MIN, SCALE_MIN + generateDouble(1.0 / d, 10.0 / d)); //rand() -> 0.1, 0.01, 0.001, etc.
-    }
+    double SCALE = GenerateScale(tabChoiceInterval[rand() % SIZE_CHOICE_INTERVAL]);
     const int ScaleTabSIZE = 4;
     double tabRandSCALE[] = {SCALE, 1.0 / SCALE, -1.0 / SCALE, -SCALE};
 
@@ -344,10 +326,46 @@ void MyAlgorithm::TutorPhase()
             fitness[i] = _best_solution->get_fitness();
         }
         int posMinFitness = absMinimumOfArray(fitness, ScaleTabSIZE + 1);
+
         trainee[j] = values[posMinFitness];
     }
 
     _best_solution->fitness();
+}
+
+void MyAlgorithm::solutionTranported(int pos)
+{
+    //double choiceInterval = rand() % 4;
+    //double type = rand() % 4;
+
+    Solution* newS = new Solution{*_solutions[pos]};
+    vector<double>& tabNewS{ newS->solution() };
+
+    for (int j = 0; j < _setup.solution_size(); ++j)
+    {
+        if (generateDouble() < PM)
+        {
+            double factor = GenerateScaleWithType(/*choiceInterval, type*/);
+            changeSolutionWithinIntervalAfterFactor(tabNewS, j, factor);
+        }
+    }
+
+    newS->fitness();
+    if (abs(newS->get_fitness()) < abs(_solutions[pos]->get_fitness()))
+    {
+        delete _solutions[pos];
+        _solutions[pos] = newS;
+    }
+    else
+    {
+        delete newS;
+    }
+}
+
+void MyAlgorithm::TransportationPhase()
+{
+    for (int k = 0; k < _setup.population_size(); ++k)
+        solutionTranported(k);
 }
 
 void MyAlgorithm::evolution(int iter, Viewer& fenetre)
@@ -355,30 +373,24 @@ void MyAlgorithm::evolution(int iter, Viewer& fenetre)
     int i = 0;
     while (i < iter && _best_solution->get_fitness() != 0.0)
     {
-        double r = rand() * 1.0 / RAND_MAX;
+        double r = generateDouble();
         TutorPhase();
         TeachingPhase(r);
+        TransportationPhase();
         LearningPhase(r);
-        /*ScalingPhase();*/
         determineBestSolution();
-        ++i;
-        /** Affichage graphique*/
+
+        /** Affichage graphique */
         fenetre.add(_best_solution->get_fitness());
         fenetre.clear();
         fenetre.afficheInit();
-        //delay(100);
         /** Fin */
+
         cout << "\nFitness: " << _best_solution->get_fitness() << endl;
         cout << *_best_solution << endl;
-    }
-}
 
-void MyAlgorithm::UpdateBestSolutionOverall(Solution* &OverallBestSolution)
-{
-    if (!OverallBestSolution)
-        OverallBestSolution = new Solution{*_best_solution};
-    else if (abs(OverallBestSolution->get_fitness()) > abs(_best_solution->get_fitness()))
-        *OverallBestSolution = *_best_solution;
+        ++i;
+    }
 }
 
 void MyAlgorithm::run(Viewer& fenetre)

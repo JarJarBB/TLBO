@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cstdlib>
 
+const double PI = 3.1415926535;
 
 Solution::Solution(const Problem& pbm): _pbm{pbm}
 {}
@@ -18,6 +19,8 @@ vector<double>& Solution::solution()
 {
     return _solution;
 }
+
+double generateDouble(double min = 0.0, double max = 1.0);
 
 // ====================================================
 
@@ -37,20 +40,18 @@ double fonctionRosenbrock(const std::vector<double> &X)
 
 double fonctionRastrigin(const std::vector<double> &X)
 {
-    double pi = 3.1415926535;
     double A = 10.0;
     double sum = 0;
 
     for (auto Xi : X)
-        sum += Xi * Xi - A * cos(2.0 * pi * Xi);
+        sum += Xi * Xi - A * cos(2.0 * PI * Xi);
 
     return A * X.size() + sum;
 }
 
 double fonctionAckley(const std::vector<double> &X)
 {
- double pi = 3.1415926535;
-    double a = 20.0, b = 0.2, c = 2.0 * pi;
+    double a = 20.0, b = 0.2, c = 2.0 * PI;
     double sum1 = 0.0, sum2 = 0.0;
     double d = X.size();
 
@@ -83,7 +84,6 @@ double fonctionSchaffer(const std::vector<double> &X)
 
 double fonctionWeierstrass(const std::vector<double> &X)
 {
-    double pi = 3.1415926535;
     double a = 0.5, b = 3.0;
     double kMax = 20.0;
     double sum1 = 0.0;
@@ -93,7 +93,7 @@ double fonctionWeierstrass(const std::vector<double> &X)
         double sum2 = 0.0;
 
         for (int k = 0; k <= kMax; ++k)
-            sum2 += std::pow(a, k) * std::cos( 2.0 * pi * std::pow(b, k) * (Xi + 0.5) );
+            sum2 += std::pow(a, k) * std::cos( 2.0 * PI * std::pow(b, k) * (Xi + 0.5) );
 
         sum1 += sum2;
     }
@@ -101,7 +101,7 @@ double fonctionWeierstrass(const std::vector<double> &X)
     double sum3 = 0.0;
 
     for (int k = 0; k <= kMax; ++k)
-        sum3 += std::pow(a, k) * std::cos( 2.0 * pi * std::pow(b, k) * 0.5 );
+        sum3 += std::pow(a, k) * std::cos( 2.0 * PI * std::pow(b, k) * 0.5 );
 
     return sum1 - X.size() * sum3;
 }
@@ -147,27 +147,22 @@ double Solution::get_fitness() const
     return _current_fitness;
 }
 
-double Solution::generateDouble(int min, int max)
+void Solution::generateDoubleWithinInterval(double& minborne, double& maxborne)
 {
-    return min + (max - min) * (rand() * 1.0 / RAND_MAX);
-}
-
-void Solution::generateDoubleWithinInterval(double& minborne,double& maxborne){
-    minborne=generateDouble(_pbm.min_intervalle(), _pbm.max_intervalle());
-    maxborne=generateDouble(minborne, _pbm.max_intervalle());
-    _solution.push_back(generateDouble(minborne,maxborne));
+    minborne = generateDouble(_pbm.min_intervalle(), _pbm.max_intervalle());
+    maxborne = generateDouble(minborne, _pbm.max_intervalle());
 }
 
 void Solution::initialize()
 {
     _solution.clear();
     _solution.reserve(_pbm.dimension());
-    double minborne,maxborne;
-    for (int i = 0; i < _pbm.dimension(); ++i)
-    {
-        generateDoubleWithinInterval(minborne,maxborne);
-    }
 
+    double minborne, maxborne;
+    generateDoubleWithinInterval(minborne,maxborne);
+
+    for (int i = 0; i < _pbm.dimension(); ++i)
+        _solution.push_back(generateDouble(minborne, maxborne));
 }
 
 Solution& Solution::operator*=(double factor)

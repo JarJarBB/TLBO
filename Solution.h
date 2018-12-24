@@ -33,9 +33,8 @@ class Solution
 
 		vector<double>& solution();
 
-		double& position(const int index); //retournera une position du tableau _solution
+		double& position(const int index);
         void  position(const int index, const double value);
-        double generateDouble(int min, int max);
 
 	private:
         vector<double> _solution;

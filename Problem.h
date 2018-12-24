@@ -5,7 +5,7 @@
 
 using namespace std;
 
-enum fonction {Rosenbrock = 0, Rastrigin, Ackley, Schwefel, Schaffer, Weierstrass};
+enum fonction {Rosenbrock, Rastrigin, Ackley, Schwefel, Schaffer, Weierstrass};
 
 class Problem
 {
