@@ -222,12 +222,12 @@ double MyAlgorithm::sdResults() const
     return sqrt( sum / _results.size() );
 }
 
-void MyAlgorithm::outputSummary(ostream& outputFile)
+void MyAlgorithm::outputSummary(ostream& output)
 {
-    outputFile << "Fonction : " << _pbm.name() << endl;
-    outputFile << "Meilleure fitness : " << _best_solution->get_fitness() << " --- Solution :" << endl;
-    outputFile << *_best_solution << endl;
-    outputFile << "Moyenne : " << meanResults() << " Ecart-type : " << sdResults() << endl;
+    output << "Fonction : " << _pbm.name() << endl;
+    output << "Meilleure fitness : " << _best_solution->get_fitness() << " ---> Solution :" << endl;
+    output << *_best_solution << endl;
+    output << "Moyenne : " << meanResults() << " Ecart-type : " << sdResults() << endl;
 }
 
 void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)

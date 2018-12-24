@@ -12,14 +12,14 @@ using namespace std;
 SetUpParams setup{2, 400, 40, 20};
 
 void TLBO(fonction f);
-void TLBOfile(ostream& outputFile);
+void TLBOtoFile(ostream& outputFile);
 
 
 int main()
 {
     TLBO(Schwefel);
 
-    //ofstream outputFile{"aTLBO201819.txt"}; TLBOfile(outputFile);
+    //ofstream outputFile{"aTLBO201819.txt"}; TLBOtoFile(cout);
 
     return 0;
 }
@@ -37,7 +37,7 @@ void TLBO(fonction f)
     fenetre.closeWindow();
 }
 
-void TLBO(fonction f, ostream& outputFile)
+void TLBO(fonction f, ostream& output)
 {
     //cout << fixed << setprecision(16);
     Viewer fenetre {};
@@ -48,18 +48,21 @@ void TLBO(fonction f, ostream& outputFile)
     algo.run(fenetre);
     fenetre.closeWindow();
 
-    algo.outputSummary(outputFile);
+    algo.outputSummary(output);
 }
 
-void TLBOfile(ostream& outputFile)
+void TLBOtoFile(ostream& outputFile)
 {
-    outputFile << "\nTLBO 201819 - Vanulli A. - Vix P. - Freyburger H. - Chevalier P.\n" << endl;
-    outputFile << setup;
-    outputFile << endl;
-    TLBO(Rosenbrock, outputFile); outputFile << endl;
-    TLBO(Rastrigin, outputFile); outputFile << endl;
-    TLBO(Ackley, outputFile); outputFile << endl;
-    TLBO(Schwefel, outputFile); outputFile << endl;
-    TLBO(Schaffer, outputFile); outputFile << endl;
-    TLBO(Weierstrass, outputFile);
+    ostringstream ostr{};
+    ostr << "\nTLBO 201819 - Vanulli A. - Vix P. - Freyburger H. - Chevalier P.\n" << endl;
+    ostr << setup;
+    ostr << endl;
+    TLBO(Rosenbrock, ostr); ostr << endl;
+    TLBO(Rastrigin, ostr); ostr << endl;
+    TLBO(Ackley, ostr); ostr << endl;
+    TLBO(Schwefel, ostr); ostr << endl;
+    TLBO(Schaffer, ostr); ostr << endl;
+    TLBO(Weierstrass, ostr);
+
+    outputFile << ostr.str();
 }
