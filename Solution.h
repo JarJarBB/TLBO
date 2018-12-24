@@ -10,18 +10,18 @@ using namespace std;
 class Solution
 {
 	public:
-		Solution (const Problem& pbm);
-		Solution (const Solution& sol) = default;
+		Solution(Problem& pbm);
+		Solution(const Solution& sol) = default;
 		~Solution() = default;
 
- 		friend ostream& operator<< (ostream& os, const Solution& sol);
-		friend istream& operator>> (istream& is, Solution& sol);
+ 		friend ostream& operator<<(ostream& os, const Solution& sol);
+		friend istream& operator>>(istream& is, Solution& sol);
 
 		const Problem& pbm() const;
 
-		Solution& operator=  (const Solution& sol);
-		bool operator== (const Solution& sol) const;
-		bool operator!= (const Solution& sol) const;
+		Solution& operator=(const Solution& sol);
+		bool operator==(const Solution& sol) const;
+		bool operator!=(const Solution& sol) const;
 		Solution& operator*=(double factor); //added
 		Solution operator*(double factor) const; //added
 
@@ -39,8 +39,8 @@ class Solution
 	private:
         vector<double> _solution;
         double _current_fitness;
-		const Problem& _pbm;
-		void generateDoubleWithinInterval(double& min,double& max);
+		Problem& _pbm;
+		void generateDoubleWithinInterval(double& min, double& max);
 };
 
 #endif // SOLUTION_H

@@ -2,6 +2,7 @@
 #include <random>
 #include <ctime>
 
+
 int tabRandDiff[] = {1, 1, 2};
 const double MAXSPEED = 1.6; // MAXSPEED > 1
 const double SCALE_MIN = 1.0; // SCALE_MIN >= 1
@@ -10,7 +11,8 @@ const double PM = 0.1; // Mutation rate
 const int SIZE_CHOICE_INTERVAL = 6;
 double tabChoiceInterval[SIZE_CHOICE_INTERVAL] = {3, 3, 3, 2, 1, 0};
 
-MyAlgorithm::MyAlgorithm(const Problem& pbm, SetUpParams& setup) :
+
+MyAlgorithm::MyAlgorithm(Problem& pbm, SetUpParams& setup) :
             _setup{setup},
             _solutions(setup.population_size()),
             _best_solution{nullptr},
@@ -227,7 +229,8 @@ void MyAlgorithm::outputSummary(ostream& output)
     output << "Fonction : " << _pbm.name() << endl;
     output << "Meilleure fitness : " << _best_solution->get_fitness() << " ---> Solution :" << endl;
     output << *_best_solution << endl;
-    output << "Moyenne : " << meanResults() << " Ecart-type : " << sdResults() << endl;
+    output << "Nombre d'appels par run : " << _pbm.callsToFunction() / _setup.independent_runs() << endl;
+    output << "Moyenne : " << meanResults() << "   Ecart-type : " << sdResults() << endl;
 }
 
 void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)
@@ -413,8 +416,9 @@ void MyAlgorithm::run(Viewer& fenetre)
     cout << "\n---------------------------------------------------------\n";
     cout << "Fitness de la meilleure solution : " << _best_solution->get_fitness() << endl;
     cout << *_best_solution << "\n" << endl;
-    cout << "Moyenne : " << meanResults() << " Ecart-type : " << sdResults() << "\n" << endl;
+    cout << "Moyenne : " << meanResults() << "   Ecart-type : " << sdResults() << "\n" << endl;
     cout << _setup << endl;
+    cout << "Il y a eut " << _pbm.callsToFunction() / _setup.independent_runs() << " calculs de fitness par run" << endl;
     cout << "Probleme optimise : la fonction " << _pbm.name() << endl;
     cout << "---------------------------------------------------------\n";
 }

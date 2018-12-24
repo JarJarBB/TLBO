@@ -11,7 +11,6 @@
 using namespace std;
 
 
-
 class MyAlgorithm
 {
 private:
@@ -19,22 +18,20 @@ private:
     const SetUpParams& _setup;
     unsigned int _upper_cost,_lower_cost; // lower and upper fitness of individuals in population
 
-    // Ces variables ont ete ajoutees
     vector<double> _results;
     Solution* _best_solution;
     const Problem& _pbm;
 
 public:
-    MyAlgorithm(const Problem& pbm, SetUpParams& setup);
+    MyAlgorithm(Problem& pbm, SetUpParams& setup);
     ~MyAlgorithm();
 
-    friend ostream& operator<< (ostream& os, const MyAlgorithm& myAlgo);
-    friend istream& operator>> (istream& is, MyAlgorithm& myAlgo);
-    MyAlgorithm& operator= (const MyAlgorithm& myAlgo);
+    friend ostream& operator<<(ostream& os, const MyAlgorithm& myAlgo);
+    friend istream& operator>>(istream& is, MyAlgorithm& myAlgo);
+    MyAlgorithm& operator=(const MyAlgorithm& myAlgo);
     const SetUpParams& setup() const;
     void initialize();
 
-    // Ces fonctions ont ete ajoutees
     void run(Viewer& fenetre);
     void evaluateFitness();
     void determineBestSolution();
@@ -52,10 +49,10 @@ public:
     void solutionTranported(int pos);
     void TransportationPhase();
     void TutorPhase();
-    void outputSummary(ostream& outputFile);
     const vector<double>& results() const;
     double meanResults() const;
     double sdResults() const;
+    void outputSummary(ostream& outputFile);
 
     const vector<Solution*>& solutions() const;
     unsigned int upper_cost() const;
@@ -63,14 +60,12 @@ public:
     Solution& solution(const unsigned int index) const;
     double fitness(const unsigned int index) const;
 
-
     double best_cost() const;
     double worst_cost() const;
     Solution& best_solution() const;
     Solution& worst_solution() const;
 
-    void evolution(int iter,Viewer& fenetre); /*makes an evolution step*/
-
+    void evolution(int iter, Viewer& fenetre); /*makes an evolution step*/
 };
 
 #endif

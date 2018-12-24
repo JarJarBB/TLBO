@@ -4,7 +4,8 @@
 
 Problem::Problem(int dimension, fonction f):
                 _dimension{dimension}, _fonction{f},
-                _max_intervalle{}, _min_intervalle{}
+                _max_intervalle{}, _min_intervalle{},
+                _calls_to_function{0}
 {
     switch (_fonction)
     {
@@ -101,4 +102,15 @@ void Problem::max_intervalle (const int val)
 void Problem::min_intervalle (const int val)
 {
     _min_intervalle=val;
+}
+
+long long int Problem::callsToFunction() const
+{
+    return _calls_to_function;
+}
+
+Problem& Problem::operator++()
+{
+    ++_calls_to_function;
+    return *this;
 }

@@ -4,7 +4,7 @@
 
 const double PI = 3.1415926535;
 
-Solution::Solution(const Problem& pbm): _pbm{pbm}
+Solution::Solution(Problem& pbm): _pbm{pbm}
 {}
 
 Solution& Solution::operator=(const Solution& sol)
@@ -110,6 +110,7 @@ double fonctionWeierstrass(const std::vector<double> &X)
 
 void Solution::fitness()
 {
+    ++_pbm;
     double value = -1.0;
     switch(_pbm.func())
     {

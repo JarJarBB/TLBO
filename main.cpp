@@ -47,7 +47,6 @@ void TLBO(fonction f, ostream& output)
     MyAlgorithm algo{p, setup};
     algo.run(fenetre);
     fenetre.closeWindow();
-
     algo.outputSummary(output);
 }
 
@@ -63,6 +62,5 @@ void TLBOtoFile(ostream& outputFile)
     TLBO(Schwefel, ostr); ostr << endl;
     TLBO(Schaffer, ostr); ostr << endl;
     TLBO(Weierstrass, ostr);
-
     outputFile << ostr.str();
 }
