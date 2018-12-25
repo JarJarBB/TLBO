@@ -1,5 +1,5 @@
 #include "myAlgorithm.h"
-#include <random>
+#include <cstdlib>
 #include <ctime>
 
 
@@ -13,20 +13,20 @@ double tabChoiceInterval[SIZE_CHOICE_INTERVAL] = {3, 3, 3, 2, 1, 0};
 
 
 MyAlgorithm::MyAlgorithm(Problem& pbm, SetUpParams& setup) :
-            _setup{setup},
             _solutions(setup.population_size()),
-            _best_solution{nullptr},
-            _pbm{pbm}, _results{}
+            _setup(setup), _upper_cost(), _lower_cost(),
+            _results(), _best_solution(NULL), _pbm(pbm)
 {
-    for (auto& i : _solutions)
-        i = new Solution{pbm};
+    for (unsigned i = 0; i < _solutions.size(); ++i)
+        _solutions[i] = new Solution(pbm);
+
     _results.reserve(_setup.population_size());
 }
 
 MyAlgorithm::~MyAlgorithm()
 {
-    for (auto i : _solutions)
-        delete i;
+    for (unsigned i = 0; i < _solutions.size(); ++i)
+        delete _solutions[i];
 
     delete _best_solution;
 }
@@ -38,14 +38,14 @@ double generateDouble(double min = 0.0, double max = 1.0)
 
 void MyAlgorithm::initialize()
 {
-    for (auto i : _solutions)
-        i->initialize(); // i->Solution::initialize();
+    for (unsigned i = 0; i < _solutions.size(); ++i)
+        _solutions[i]->initialize(); //Solution::initialize();
 }
 
 void MyAlgorithm::evaluateFitness()
 {
-    for(auto i : _solutions)
-        i->fitness();
+    for (unsigned i = 0; i < _solutions.size(); ++i)
+        _solutions[i]->fitness();
 }
 
 const vector<Solution*>& MyAlgorithm::solutions() const
@@ -57,18 +57,18 @@ vector<double> MyAlgorithm::MeanPerColumn() const
 {
     vector<double> Means(_setup.solution_size(), 0.0);
 
-    for (auto k : _solutions)
+    for (unsigned k =0 ; k < _solutions.size(); ++k)
     {
-        if (k != _best_solution)
+        if (_solutions[k] != _best_solution)
         {
-            vector<double>& S = k->solution();
-            for (int i = 0; i < S.size(); ++i)
+            vector<double>& S = _solutions[k]->solution();
+            for (unsigned i = 0; i < S.size(); ++i)
                 Means[i] += S[i];
         }
     }
 
-    for (auto& i : Means)
-        i /= _setup.population_size() - 1;
+    for (unsigned i = 0; i < Means.size(); ++i)
+        Means[i] /= _setup.population_size() - 1;
 
     return Means;
 }
@@ -81,12 +81,12 @@ void MyAlgorithm::determineBestSolution()
         double minimum = _solutions[k]->get_fitness();
         _best_solution = _solutions[k];
 
-        for (auto i : _solutions)
+        for (unsigned i = 0; i < _solutions.size(); ++i)
         {
-            if (abs(i->get_fitness()) < abs(minimum))
+            if (abs(_solutions[i]->get_fitness()) < abs(minimum))
             {
-                minimum = i->get_fitness();
-                _best_solution = i;
+                minimum = _solutions[i]->get_fitness();
+                _best_solution = _solutions[i];
             }
         }
     }
@@ -95,7 +95,7 @@ void MyAlgorithm::determineBestSolution()
 void MyAlgorithm::UpdateBestSolutionOverall(Solution* &OverallBestSolution)
 {
     if (!OverallBestSolution)
-        OverallBestSolution = new Solution{*_best_solution};
+        OverallBestSolution = new Solution(*_best_solution);
     else if (abs(OverallBestSolution->get_fitness()) > abs(_best_solution->get_fitness()))
         *OverallBestSolution = *_best_solution;
 }
@@ -192,7 +192,7 @@ double GenerateScaleWithType(int choiceInterval = -1, int type = -1)
 
 void MyAlgorithm::speedControl(const vector<double> &oldS, vector<double> &newS) const
 {
-    for (int i = 0; i < oldS.size(); ++i)
+    for (unsigned i = 0; i < oldS.size(); ++i)
     {
         double signe;
         if (newS[i] / oldS[i] >= 0.0) signe = 1.0;
@@ -212,14 +212,16 @@ const vector<double>& MyAlgorithm::results() const
 
 double MyAlgorithm::meanResults() const
 {
-    double sum = accumulate(_results.begin(), _results.end(), 0.0);
+    double sum = 0.0;
+    for (unsigned i = 0; i < _results.size(); ++i)
+        sum += _results[i];
     return sum / _results.size();
 }
 
 double MyAlgorithm::sdResults() const
 {
     double mean = meanResults(), sum = 0.0;
-    for (int i = 0; i < _results.size(); ++i)
+    for (unsigned i = 0; i < _results.size(); ++i)
        sum += (_results[i] - mean) * (_results[i] - mean);
     return sqrt( sum / _results.size() );
 }
@@ -229,16 +231,16 @@ void MyAlgorithm::outputSummary(ostream& output)
     output << "Fonction : " << _pbm.name() << endl;
     output << "Meilleure fitness : " << _best_solution->get_fitness() << " ---> Solution :" << endl;
     output << *_best_solution << endl;
-    output << "Nombre d'appels par run : " << _pbm.callsToFunction() / _setup.independent_runs() << endl;
+    output << "Appels a la fonction par run : " << _pbm.callsToFunction() / _setup.independent_runs() << endl;
     output << "Moyenne : " << meanResults() << "   Ecart-type : " << sdResults() << endl;
 }
 
 void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)
 {
-    Solution* newSolution = new Solution{*_solutions[k]};
-    vector<double>& tabNewSolution{ newSolution->solution() };
+    Solution* newSolution = new Solution(*_solutions[k]);
+    vector<double>& tabNewSolution(newSolution->solution());
 
-    for (int j = 0; j < _setup.solution_size(); ++j)
+    for (unsigned j = 0; j < _setup.solution_size(); ++j)
     {
         double diffMean = Difference_Mean(j, Means, r);
         changeSolutionWithinInterval(tabNewSolution, j, diffMean);
@@ -257,7 +259,7 @@ void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)
 void MyAlgorithm::TeachingPhase(double r)
 {
     vector<double> Means = MeanPerColumn();
-    for (int k = 0; k < _setup.population_size(); ++k)
+    for (unsigned k = 0; k < _setup.population_size(); ++k)
     {
         if (_solutions[k] != _best_solution)
             learnFromTeacher(k, Means, r);
@@ -266,13 +268,13 @@ void MyAlgorithm::TeachingPhase(double r)
 
 void MyAlgorithm::learnFromPeer(int P, int Q, double r)
 {
-    Solution* newP = new Solution{*_solutions[P]};
-    vector<double>& tabNewP{ newP->solution() };
-    vector<double>& tabQ{ _solutions[Q]->solution() };
+    Solution* newP = new Solution(*_solutions[P]);
+    vector<double>& tabNewP(newP->solution());
+    vector<double>& tabQ(_solutions[Q]->solution());
 
     if (abs(newP->get_fitness()) < abs(_solutions[Q]->get_fitness()))
     {
-        for (int j = 0; j < _setup.solution_size(); ++j)
+        for (unsigned j = 0; j < _setup.solution_size(); ++j)
         {
             double add = r * (tabNewP[j] - tabQ[j]);
             changeSolutionWithinInterval(tabNewP, j, add);
@@ -280,7 +282,7 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
     }
     else
     {
-        for (int j = 0; j < _setup.solution_size(); ++j)
+        for (unsigned j = 0; j < _setup.solution_size(); ++j)
         {
             double add = r * (tabQ[j] - tabNewP[j]);
             changeSolutionWithinInterval(tabNewP, j, add);
@@ -297,7 +299,7 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
 
 void MyAlgorithm::LearningPhase(double r)
 {
-    for (int k = 0; k < _setup.population_size(); ++k)
+    for (unsigned k = 0; k < _setup.population_size(); ++k)
     {
         int Q = rand() % _setup.population_size();
         learnFromPeer(k, Q, r);
@@ -310,12 +312,12 @@ void MyAlgorithm::TutorPhase()
     const int ScaleTabSIZE = 4;
     double tabRandSCALE[] = {SCALE, 1.0 / SCALE, -1.0 / SCALE, -SCALE};
 
-    vector<double>& trainee{_best_solution->solution()};
+    vector<double>& trainee(_best_solution->solution());
 
     double values[ScaleTabSIZE + 1];
     double fitness[ScaleTabSIZE + 1];
 
-    for (int j = 0; j < _setup.solution_size(); ++j)
+    for (unsigned j = 0; j < _setup.solution_size(); ++j)
     {
         values[0] = trainee[j];
 
@@ -341,10 +343,10 @@ void MyAlgorithm::solutionTranported(int pos)
     //double choiceInterval = rand() % 4;
     //double type = rand() % 4;
 
-    Solution* newS = new Solution{*_solutions[pos]};
-    vector<double>& tabNewS{ newS->solution() };
+    Solution* newS = new Solution(*_solutions[pos]);
+    vector<double>& tabNewS(newS->solution());
 
-    for (int j = 0; j < _setup.solution_size(); ++j)
+    for (unsigned j = 0; j < _setup.solution_size(); ++j)
     {
         if (generateDouble() < PM)
         {
@@ -367,7 +369,7 @@ void MyAlgorithm::solutionTranported(int pos)
 
 void MyAlgorithm::TransportationPhase()
 {
-    for (int k = 0; k < _setup.population_size(); ++k)
+    for (unsigned k = 0; k < _setup.population_size(); ++k)
         solutionTranported(k);
 }
 
@@ -377,10 +379,13 @@ void MyAlgorithm::evolution(int iter, Viewer& fenetre)
     while (i < iter && _best_solution->get_fitness() != 0.0)
     {
         double r = generateDouble();
+
+        /******* !!! Le coeur de l'algorithme: *******/
         TutorPhase();
         TeachingPhase(r);
         TransportationPhase();
         LearningPhase(r);
+
         determineBestSolution();
 
         /** Affichage graphique */
@@ -400,9 +405,9 @@ void MyAlgorithm::run(Viewer& fenetre)
 {
     srand(static_cast<unsigned int>(time(NULL)));
 
-    Solution* OverallBestSolution = nullptr;
+    Solution* OverallBestSolution = NULL;
 
-    for (int i = 0; i < _setup.independent_runs(); ++i)
+    for (unsigned i = 0; i < _setup.independent_runs(); ++i)
     {
         initialize();
         evaluateFitness();

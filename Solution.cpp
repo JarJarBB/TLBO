@@ -3,8 +3,18 @@
 #include <cstdlib>
 
 const double PI = 3.1415926535;
+const double E = 2.7182818284;
 
-Solution::Solution(Problem& pbm): _pbm{pbm}
+Solution::Solution(Problem& pbm): _solution(), _current_fitness(), _pbm(pbm)
+{}
+
+Solution::Solution(const Solution& sol):
+    _solution(sol._solution),
+    _current_fitness(sol._current_fitness),
+    _pbm(sol._pbm)
+{}
+
+Solution::~Solution()
 {}
 
 Solution& Solution::operator=(const Solution& sol)
@@ -43,8 +53,8 @@ double fonctionRastrigin(const std::vector<double> &X)
     double A = 10.0;
     double sum = 0;
 
-    for (auto Xi : X)
-        sum += Xi * Xi - A * cos(2.0 * PI * Xi);
+    for (unsigned i = 0; i < X.size(); ++i)
+        sum += X[i] * X[i] - A * cos(2.0 * PI * X[i]);
 
     return A * X.size() + sum;
 }
@@ -55,10 +65,10 @@ double fonctionAckley(const std::vector<double> &X)
     double sum1 = 0.0, sum2 = 0.0;
     double d = X.size();
 
-    for (auto Xi : X)
+    for (unsigned i = 0; i < X.size(); ++i)
     {
-        sum1 += Xi * Xi;
-        sum2 += std::cos(c * Xi);
+        sum1 += X[i] * X[i];
+        sum2 += std::cos(c * X[i]);
     }
 
     return -a * std::exp(-b * std::sqrt(sum1 / d)) - std::exp(sum2 / d) + a + std::exp(1.0);
@@ -67,14 +77,17 @@ double fonctionAckley(const std::vector<double> &X)
 double fonctionSchwefel(const std::vector<double> &X)
 {
     double sum = 0;
-    for (auto Xi : X)
-        sum += Xi * sin(std::sqrt(std::abs(Xi)));
 
-    return 418.982887272433799807913601398 * X.size() - sum;
+    for (unsigned i = 0; i < X.size(); ++i)
+        sum += X[i] * sin(std::sqrt(std::abs(X[i])));
+
+    return 418.9828872724337998 * X.size() - sum;
 }
 
 double fonctionSchaffer(const std::vector<double> &X)
 {
+    if (X.size() < 2) return -1.0;
+
     double x = X[0], y = X[1];
     double c1 = std::sin(x * x - y * y);
     double c2 = 1.0 + 0.001 * (x * x + y * y);
@@ -88,12 +101,12 @@ double fonctionWeierstrass(const std::vector<double> &X)
     double kMax = 20.0;
     double sum1 = 0.0;
 
-    for (auto Xi : X)
+    for (unsigned i = 0; i < X.size(); ++i)
     {
         double sum2 = 0.0;
 
         for (int k = 0; k <= kMax; ++k)
-            sum2 += std::pow(a, k) * std::cos( 2.0 * PI * std::pow(b, k) * (Xi + 0.5) );
+            sum2 += std::pow(a, k) * std::cos( 2.0 * PI * std::pow(b, k) * (X[i] + 0.5) );
 
         sum1 += sum2;
     }
@@ -106,6 +119,22 @@ double fonctionWeierstrass(const std::vector<double> &X)
     return sum1 - X.size() * sum3;
 }
 
+double fonctionTheSpecialFunction(const std::vector<double> &X)
+{
+    if (X.size() < 4) return 12345.0;
+
+    double sum = 0.0;
+
+    sum += std::fabs(X[0]);
+    sum += std::fabs(X[1] - 1.0);
+    sum += std::fabs(X[2] - E);
+    sum += std::fabs(X[3] - PI);
+    for (unsigned i = 4; i < X.size(); ++i)
+        sum += std::pow(std::fabs(X[i] - i), i);
+
+    return sum;
+}
+
 // ====================================================
 
 void Solution::fitness()
@@ -114,29 +143,33 @@ void Solution::fitness()
     double value = -1.0;
     switch(_pbm.func())
     {
-         case Rosenbrock:
+        case Rosenbrock:
              value = fonctionRosenbrock(_solution);
-         break;
+        break;
 
-         case Rastrigin:
+        case Rastrigin:
              value = fonctionRastrigin(_solution);
-         break;
+        break;
 
-         case Ackley:
+        case Ackley:
              value = fonctionAckley(_solution);
-         break;
+        break;
 
-         case Schwefel:
+        case Schwefel:
              value = fonctionSchwefel(_solution);
-         break;
+        break;
 
-         case Schaffer:
+        case Schaffer:
              value = fonctionSchaffer(_solution);
-         break;
+        break;
 
-         case Weierstrass:
+        case Weierstrass:
              value = fonctionWeierstrass(_solution);
-         break;
+        break;
+
+        case TheSpecialFunction:
+            value = fonctionTheSpecialFunction(_solution);
+        break;
     }
     _current_fitness = value;
 }
@@ -160,7 +193,7 @@ void Solution::initialize()
     _solution.reserve(_pbm.dimension());
 
     double minborne, maxborne;
-    generateDoubleWithinInterval(minborne,maxborne);
+    generateDoubleWithinInterval(minborne, maxborne);
 
     for (int i = 0; i < _pbm.dimension(); ++i)
         _solution.push_back(generateDouble(minborne, maxborne));
@@ -168,21 +201,23 @@ void Solution::initialize()
 
 Solution& Solution::operator*=(double factor)
 {
-    for (auto& i : _solution)
-        i *= factor;
+    for (unsigned i = 0; i < _solution.size(); ++i)
+        _solution[i] *= factor;
+
     return *this;
 }
 
 Solution Solution::operator*(double factor) const
 {
-    Solution S2{*this};
+    Solution S2(*this);
     S2 *= factor;
+
     return S2;
 }
 
 ostream& operator<<(ostream& os, const Solution& sol)
 {
-    unsigned int i;
+    unsigned i;
     for (i = 0; i < sol._solution.size() - 1; ++i)
         os << sol._solution[i] << ", ";
     os << sol._solution[i];

@@ -1,43 +1,47 @@
 #include "Problem.h"
 
-//Rosenbrock: -5,10 Rastrigin: -5,5 Ackley -32,32, Schwefel: -500, 500, Schaffer: -100,100 Weierstrass -5,5
+//Rosenbrock: -5,10 Rastrigin: -5,5 Ackley -32,32, Schwefel: -500, 500, Schaffer: -100,100 Weierstrass -5,5 TheSpecialFunction 1000,-1000
 
 Problem::Problem(int dimension, fonction f):
-                _dimension{dimension}, _fonction{f},
-                _max_intervalle{}, _min_intervalle{},
-                _calls_to_function{0}
+                _dimension(dimension), _fonction(f),
+                _max_intervalle(), _min_intervalle(),
+                _calls_to_function(0)
 {
     switch (_fonction)
     {
         case Rosenbrock:
-            _max_intervalle=10;
-            _min_intervalle=-5;
+            _max_intervalle = 10;
+            _min_intervalle = -5;
         break;
 
         case Rastrigin:
-             _max_intervalle=5;
-            _min_intervalle=-5;
+             _max_intervalle = 5;
+            _min_intervalle = -5;
         break;
 
         case Ackley:
-             _max_intervalle=32;
-            _min_intervalle=-32;
+             _max_intervalle = 32;
+            _min_intervalle = -32;
         break;
 
         case Schwefel:
-             _max_intervalle=500;
-            _min_intervalle=-500;
+             _max_intervalle = 500;
+            _min_intervalle = -500;
         break;
 
         case Schaffer:
-             _max_intervalle=100;
-            _min_intervalle=-100;
+             _max_intervalle = 100;
+            _min_intervalle = -100;
         break;
 
         case Weierstrass:
-             _max_intervalle=5;
-            _min_intervalle=-5;
+             _max_intervalle = 5;
+            _min_intervalle = -5;
         break;
+
+        case TheSpecialFunction:
+            _max_intervalle = 1000;
+            _min_intervalle = -1000;
     }
 }
 
@@ -81,27 +85,34 @@ string Problem::name() const
         case Weierstrass:
             return "Weierstrass";
         break;
+
+        case TheSpecialFunction:
+            return "TheSpecialFunction";
+        break;
+
+        default:
+            return "Error in Problem::name()";
     }
 }
 
-const int Problem::max_intervalle () const
+int Problem::max_intervalle () const
 {
     return _max_intervalle;
 }
 
-const int Problem::min_intervalle () const
+int Problem::min_intervalle () const
 {
     return _min_intervalle;
 }
 
 void Problem::max_intervalle (const int val)
 {
-    _max_intervalle=val;
+    _max_intervalle = val;
 }
 
 void Problem::min_intervalle (const int val)
 {
-    _min_intervalle=val;
+    _min_intervalle = val;
 }
 
 long long int Problem::callsToFunction() const

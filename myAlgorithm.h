@@ -14,15 +14,16 @@ using namespace std;
 class MyAlgorithm
 {
 private:
-    vector<Solution*> _solutions;     // individuals in population
+    vector<Solution*> _solutions; // individuals in population
     const SetUpParams& _setup;
-    unsigned int _upper_cost,_lower_cost; // lower and upper fitness of individuals in population
+    unsigned int _upper_cost, _lower_cost; // lower and upper fitness of individuals in population
 
     vector<double> _results;
     Solution* _best_solution;
     const Problem& _pbm;
 
 public:
+    MyAlgorithm(const MyAlgorithm& A);
     MyAlgorithm(Problem& pbm, SetUpParams& setup);
     ~MyAlgorithm();
 
