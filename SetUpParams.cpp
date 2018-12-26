@@ -63,34 +63,26 @@ ostream& operator<<(ostream& os, const SetUpParams& setup)
 istream& operator>>(istream& is, SetUpParams& setup)
 {
     int val;
+    
     cout << "Nombre de run independant ? " << endl;
     is >> val;
     cout << endl;
-    if(val >= 0)
-    {
-        setup.independent_runs(val);
-    }
+    if (val >= 0) setup.independent_runs(val);
+    
     cout << "Nombre de generation ? " << endl;
     is >> val;
     cout << endl;
-    if(val >= 0)
-    {
-        setup.nb_evolution_steps(val);
-    }
+    if (val >= 0) setup.nb_evolution_steps(val);
+    
     cout << "Taille de la population ? " << endl;
     is >> val;
     cout << endl;
-    if(val >= 0)
-    {
-        setup.population_size(val);
-    }
+    if (val >= 0) setup.population_size(val);
+    
     cout << "Taille d'une solution ? " << endl;
     is >> val;
     cout << endl;
-    if(val >= 0)
-    {
-        setup.solution_size(val);
-    }
+    if (val >= 0) setup.solution_size(val);
 
     return is;
 }

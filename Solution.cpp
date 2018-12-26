@@ -131,7 +131,7 @@ double fonctionTheSpecialFunction(const std::vector<double> &X)
     sum += std::fabs(X[3] - PI);
     for (unsigned i = 4; i < X.size(); ++i)
         sum += std::pow(std::fabs(X[i] - i), i);
-
+    
     return sum;
 }
 

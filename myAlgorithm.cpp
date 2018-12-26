@@ -229,6 +229,7 @@ double MyAlgorithm::sdResults() const
 void MyAlgorithm::outputSummary(ostream& output)
 {
     output << "Fonction : " << _pbm.name() << endl;
+    output << "Intervalle de recherche : " << "[" << _pbm.min_intervalle() << ", " << _pbm.max_intervalle() << "]" << endl;
     output << "Meilleure fitness : " << _best_solution->get_fitness() << " ---> Solution :" << endl;
     output << *_best_solution << endl;
     output << "Appels a la fonction par run : " << _pbm.callsToFunction() / _setup.independent_runs() << endl;
