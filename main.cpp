@@ -13,7 +13,7 @@ using namespace std;
 Rosenbrock(1): -5,10 Rastrigin(0): -5,5 Ackley(0): -32,32 Schwefel(420.968746): -500, 500
 Schaffer(0): -100,100 Weierstrass(0): -5,5 TheSpecialFunction(0, 1, e, pi, 4, 5,..., n) -1000,1000 */
 
-SetUpParams setup(2, 400, 40, 20);
+SetUpParams setup(2, 500, 40, 20);
 
 void TLBO(fonction f);
 void TLBOtoFile(ostream& outputFile);

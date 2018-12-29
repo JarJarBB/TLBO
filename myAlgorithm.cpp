@@ -3,13 +3,13 @@
 #include <ctime>
 
 
-int tabRandDiff[] = {1, 1, 2};
+const int tabRandDiff[] = {1, 1, 2}; // 1 is twice as likely to be chosen than 2
 const double MAXSPEED = 1.6; // MAXSPEED > 1
 const double SCALE_MIN = 1.0; // SCALE_MIN >= 1
 const double SCALE_MAX = 200.0; // SCALE_MAX > SCALE_MIN && SCALE_MAX > 100
 const double PM = 0.1; // Mutation rate
-const int SIZE_CHOICE_INTERVAL = 6;
-double tabChoiceInterval[SIZE_CHOICE_INTERVAL] = {3, 3, 3, 2, 1, 0};
+const int SIZE_CHOICE_INTERVAL = 6; // Size of tabChoiceInterval
+const int tabChoiceInterval[SIZE_CHOICE_INTERVAL] = {3, 3, 3, 2, 1, 0}; // Choice 3 is twice as likely to be chosen
 
 
 MyAlgorithm::MyAlgorithm(Problem& pbm, SetUpParams& setup) :
@@ -108,7 +108,7 @@ Solution& MyAlgorithm::best_solution() const
 double MyAlgorithm::Difference_Mean(int j, const vector<double>& Means, double r) const
 {
     double Xbest = _best_solution->solution()[j];
-    double Tf = tabRandDiff[rand() % 3]; //'One' is twice as likely to be chosen as '2'
+    double Tf = tabRandDiff[rand() % 3]; // 'One' is twice as likely to be chosen as '2'
     double M = Means[j];
 
     return r * (Xbest - Tf * M);
@@ -273,11 +273,11 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
     vector<double>& tabNewP(newP->solution());
     vector<double>& tabQ(_solutions[Q]->solution());
 
-    if (abs(newP->get_fitness()) < abs(_solutions[Q]->get_fitness()))
+    if (abs(_solutions[Q]->get_fitness()) < abs(newP->get_fitness()))
     {
         for (unsigned j = 0; j < _setup.solution_size(); ++j)
         {
-            double add = r * (tabNewP[j] - tabQ[j]);
+            double add = r * (tabQ[j] - tabNewP[j]);
             changeSolutionWithinInterval(tabNewP, j, add);
         }
     }
@@ -285,7 +285,7 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
     {
         for (unsigned j = 0; j < _setup.solution_size(); ++j)
         {
-            double add = r * (tabQ[j] - tabNewP[j]);
+            double add = r * (tabNewP[j] - tabQ[j]);
             changeSolutionWithinInterval(tabNewP, j, add);
         }
     }
@@ -341,8 +341,8 @@ void MyAlgorithm::TutorPhase()
 
 void MyAlgorithm::solutionTranported(int pos)
 {
-    //double choiceInterval = rand() % 4;
-    //double type = rand() % 4;
+    //int choiceInterval = rand() % 4;
+    //int type = rand() % 4;
 
     Solution* newS = new Solution(*_solutions[pos]);
     vector<double>& tabNewS(newS->solution());
@@ -362,10 +362,7 @@ void MyAlgorithm::solutionTranported(int pos)
         delete _solutions[pos];
         _solutions[pos] = newS;
     }
-    else
-    {
-        delete newS;
-    }
+    else delete newS;
 }
 
 void MyAlgorithm::TransportationPhase()

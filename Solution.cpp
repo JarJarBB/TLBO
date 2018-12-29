@@ -131,7 +131,7 @@ double fonctionTheSpecialFunction(const std::vector<double> &X)
     sum += std::fabs(X[3] - PI);
     for (unsigned i = 4; i < X.size(); ++i)
         sum += std::pow(std::fabs(X[i] - i), i);
-    
+
     return sum;
 }
 
@@ -196,7 +196,8 @@ void Solution::initialize()
     generateDoubleWithinInterval(minborne, maxborne);
 
     for (int i = 0; i < _pbm.dimension(); ++i)
-        _solution.push_back(generateDouble(minborne, maxborne));
+        //_solution.push_back(generateDouble(minborne, maxborne));
+        _solution.push_back(generateDouble(_pbm.min_intervalle(), _pbm.max_intervalle()));
 }
 
 Solution& Solution::operator*=(double factor)

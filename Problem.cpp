@@ -1,6 +1,7 @@
 #include "Problem.h"
 
-//Rosenbrock: -5,10 Rastrigin: -5,5 Ackley -32,32, Schwefel: -500, 500, Schaffer: -100,100 Weierstrass -5,5 TheSpecialFunction 1000,-1000
+/* Rosenbrock: -5,10 Rastrigin: -5,5 Ackley -32,32, Schwefel: -500, 500
+Schaffer: -100,100 Weierstrass -5,5 TheSpecialFunction 1000,-1000 */
 
 Problem::Problem(int dimension, fonction f):
                 _dimension(dimension), _fonction(f),
@@ -12,36 +13,41 @@ Problem::Problem(int dimension, fonction f):
         case Rosenbrock:
             _max_intervalle = 10;
             _min_intervalle = -5;
-        break;
+            break;
 
         case Rastrigin:
              _max_intervalle = 5;
             _min_intervalle = -5;
-        break;
+            break;
 
         case Ackley:
              _max_intervalle = 32;
             _min_intervalle = -32;
-        break;
+            break;
 
         case Schwefel:
              _max_intervalle = 500;
             _min_intervalle = -500;
-        break;
+            break;
 
         case Schaffer:
              _max_intervalle = 100;
             _min_intervalle = -100;
-        break;
+            break;
 
         case Weierstrass:
              _max_intervalle = 5;
             _min_intervalle = -5;
-        break;
+            break;
 
         case TheSpecialFunction:
             _max_intervalle = 1000;
             _min_intervalle = -1000;
+            break;
+
+        default:
+            cout << "Error in Problem::Problem() : improper function name!" << endl;
+            break;
     }
 }
 
