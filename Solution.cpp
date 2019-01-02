@@ -79,7 +79,7 @@ double fonctionSchwefel(const std::vector<double> &X)
     double sum = 0;
 
     for (unsigned i = 0; i < X.size(); ++i)
-        sum += X[i] * sin(std::sqrt(std::abs(X[i])));
+        sum += X[i] * std::sin(std::sqrt(std::abs(X[i])));
 
     return 418.9828872724337998 * X.size() - sum;
 }
@@ -121,18 +121,16 @@ double fonctionWeierstrass(const std::vector<double> &X)
 
 double fonctionTheSpecialFunction(const std::vector<double> &X)
 {
-    if (X.size() < 4) return 12345.0;
-
     double sum = 0.0;
 
-    sum += std::fabs(X[0]);
-    sum += std::fabs(X[1] - 1.0);
-    sum += std::fabs(X[2] - E);
-    sum += std::fabs(X[3] - PI);
-    for (unsigned i = 4; i < X.size(); ++i)
-        sum += std::pow(std::fabs(X[i] - i), i);
-
-    return sum;
+    for (unsigned i = 0; i < X.size(); ++i)
+    {
+        if (i + 1 == 2) sum += std::pow(std::fabs(X[i] - E), 2);
+        else if (i + 1 == 3) sum += std::pow(std::fabs(X[i] - PI), 2);
+        else sum += std::pow(std::fabs(X[i] - (i + 1)), 2);
+    }
+    
+    return double{sum};
 }
 
 // ====================================================
@@ -179,6 +177,11 @@ void Solution::fitness()
 double Solution::get_fitness() const
 {
     return _current_fitness;
+}
+
+void  Solution::set_fitness(double fitness)
+{
+    _current_fitness = fitness;
 }
 
 void Solution::generateDoubleWithinInterval(double& minborne, double& maxborne)

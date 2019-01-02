@@ -324,26 +324,26 @@ void MyAlgorithm::TutorPhase()
 
         for (int i = 1; i < ScaleTabSIZE + 1; ++i)
             values[i] = valueAdaptedToPbmInterval(values[0], tabRandSCALE[i - 1] * values[0]);
-
-        for (int i = 0; i < ScaleTabSIZE + 1; ++i)
+        
+        fitness[0] = _best_solution->get_fitness();
+        for (int i = 1; i < ScaleTabSIZE + 1; ++i)
         {
             trainee[j] = values[i];
             _best_solution->fitness();
             fitness[i] = _best_solution->get_fitness();
         }
+        
         int posMinFitness = absMinimumOfArray(fitness, ScaleTabSIZE + 1);
-
         trainee[j] = values[posMinFitness];
+        _best_solution->set_fitness(fitness[posMinFitness]);
     }
-
-    _best_solution->fitness();
 }
 
 void MyAlgorithm::solutionTranported(int pos)
 {
     //int choiceInterval = rand() % 4;
     //int type = rand() % 4;
-
+    
     Solution* newS = new Solution(*_solutions[pos]);
     vector<double>& tabNewS(newS->solution());
 

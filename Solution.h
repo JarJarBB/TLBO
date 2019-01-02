@@ -26,6 +26,7 @@ class Solution
 		void initialize();
 		void fitness();
 		double get_fitness() const;
+        void set_fitness(double fitness);
 		unsigned int size() const;
 		vector<double>& solution();
 
