@@ -129,8 +129,8 @@ double fonctionTheSpecialFunction(const std::vector<double> &X)
         else if (i + 1 == 3) sum += std::pow(std::fabs(X[i] - PI), 2);
         else sum += std::pow(std::fabs(X[i] - (i + 1)), 2);
     }
-    
-    return double{sum};
+    double s = sum;
+    return s;
 }
 
 // ====================================================
