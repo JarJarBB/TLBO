@@ -1,7 +1,7 @@
 #include "Problem.h"
 
 /* Rosenbrock: -5,10 Rastrigin: -5,5 Ackley -32,32, Schwefel: -500, 500
-Schaffer: -100,100 Weierstrass -5,5 TheSpecialFunction 1000,-1000 */
+Schaffer: -100,100 Weierstrass -1,1 TheSpecialFunction 1000,-1000 */
 
 Problem::Problem(int dimension, fonction f):
                 _dimension(dimension), _fonction(f),
@@ -36,8 +36,8 @@ Problem::Problem(int dimension, fonction f):
             break;
 
         case Weierstrass:
-             _max_intervalle = 5;
-            _min_intervalle = -5;
+             _max_intervalle = 1;
+            _min_intervalle = -1;
             break;
 
         case TheSpecialFunction:
