@@ -83,7 +83,7 @@ void MyAlgorithm::determineBestSolution()
 
         for (unsigned i = 0; i < _solutions.size(); ++i)
         {
-            if (abs(_solutions[i]->get_fitness()) < abs(minimum))
+            if ((_solutions[i]->get_fitness()) < (minimum))
             {
                 minimum = _solutions[i]->get_fitness();
                 _best_solution = _solutions[i];
@@ -96,7 +96,7 @@ void MyAlgorithm::UpdateBestSolutionOverall(Solution* &OverallBestSolution)
 {
     if (!OverallBestSolution)
         OverallBestSolution = new Solution(*_best_solution);
-    else if (abs(OverallBestSolution->get_fitness()) > abs(_best_solution->get_fitness()))
+    else if ((OverallBestSolution->get_fitness()) > (_best_solution->get_fitness()))
         *OverallBestSolution = *_best_solution;
 }
 
@@ -148,11 +148,11 @@ void MyAlgorithm::changeSolutionWithinIntervalAfterFactor(vector<double>& tabNew
     tabNewP[j] = valueAdaptedToPbmInterval(tabNewP[j], tabNewP[j] * factor);
 }
 
-unsigned int absMinimumOfArray(double* t, int d)
+unsigned int minimumOfArray(double* t, int d)
 {
     unsigned int pos = 0;
     for (int i = 1; i < d; ++i)
-        if (abs(t[i]) < abs(t[pos])) pos = i;
+        if ((t[i]) < (t[pos])) pos = i;
 
     return pos;
 }
@@ -190,7 +190,8 @@ double GenerateScaleWithType(int choiceInterval = -1, int type = -1)
     }
 }
 
-void MyAlgorithm::speedControl(const vector<double> &oldS, vector<double> &newS) const
+void MyAlgorithm::speedControl(const vector<double> &oldS,
+                               vector<double> &newS) const
 {
     for (unsigned i = 0; i < oldS.size(); ++i)
     {
@@ -249,7 +250,7 @@ void MyAlgorithm::learnFromTeacher(int k, const vector<double>& Means, double r)
     speedControl(_solutions[k]->solution(), tabNewSolution);
     newSolution->fitness();
 
-    if (abs(newSolution->get_fitness()) < abs(_solutions[k]->get_fitness()))
+    if ((newSolution->get_fitness()) < (_solutions[k]->get_fitness()))
     {
         delete _solutions[k];
         _solutions[k] = newSolution;
@@ -273,7 +274,7 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
     vector<double>& tabNewP(newP->solution());
     vector<double>& tabQ(_solutions[Q]->solution());
 
-    if (abs(_solutions[Q]->get_fitness()) < abs(newP->get_fitness()))
+    if ((_solutions[Q]->get_fitness()) < (newP->get_fitness()))
     {
         for (unsigned j = 0; j < _setup.solution_size(); ++j)
         {
@@ -290,7 +291,7 @@ void MyAlgorithm::learnFromPeer(int P, int Q, double r)
         }
     }
     newP->fitness();
-    if (abs(newP->get_fitness()) < abs(_solutions[P]->get_fitness()))
+    if ((newP->get_fitness()) < (_solutions[P]->get_fitness()))
     {
         delete _solutions[P];
         _solutions[P] = newP;
@@ -324,7 +325,7 @@ void MyAlgorithm::TutorPhase()
 
         for (int i = 1; i < ScaleTabSIZE + 1; ++i)
             values[i] = valueAdaptedToPbmInterval(values[0], tabRandSCALE[i - 1] * values[0]);
-        
+
         fitness[0] = _best_solution->get_fitness();
         for (int i = 1; i < ScaleTabSIZE + 1; ++i)
         {
@@ -332,8 +333,8 @@ void MyAlgorithm::TutorPhase()
             _best_solution->fitness();
             fitness[i] = _best_solution->get_fitness();
         }
-        
-        int posMinFitness = absMinimumOfArray(fitness, ScaleTabSIZE + 1);
+
+        int posMinFitness = minimumOfArray(fitness, ScaleTabSIZE + 1);
         trainee[j] = values[posMinFitness];
         _best_solution->set_fitness(fitness[posMinFitness]);
     }
@@ -343,7 +344,7 @@ void MyAlgorithm::solutionTranported(int pos)
 {
     //int choiceInterval = rand() % 4;
     //int type = rand() % 4;
-    
+
     Solution* newS = new Solution(*_solutions[pos]);
     vector<double>& tabNewS(newS->solution());
 
@@ -357,7 +358,7 @@ void MyAlgorithm::solutionTranported(int pos)
     }
 
     newS->fitness();
-    if (abs(newS->get_fitness()) < abs(_solutions[pos]->get_fitness()))
+    if ((newS->get_fitness()) < (_solutions[pos]->get_fitness()))
     {
         delete _solutions[pos];
         _solutions[pos] = newS;

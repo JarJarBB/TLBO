@@ -36,8 +36,8 @@ Problem::Problem(int dimension, fonction f):
             break;
 
         case Weierstrass:
-             _max_intervalle = 1;
-            _min_intervalle = -1;
+             _max_intervalle = 0.5;
+            _min_intervalle = -0.5;
             break;
 
         case TheSpecialFunction:
@@ -101,12 +101,12 @@ string Problem::name() const
     }
 }
 
-int Problem::max_intervalle () const
+double Problem::max_intervalle () const
 {
     return _max_intervalle;
 }
 
-int Problem::min_intervalle () const
+double Problem::min_intervalle () const
 {
     return _min_intervalle;
 }

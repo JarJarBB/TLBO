@@ -27,14 +27,14 @@ class Problem
         long long int callsToFunction() const;
 		void max_intervalle (const int val);
 		void min_intervalle (const int val);
-		int max_intervalle () const;
-		int min_intervalle () const;
+		double max_intervalle () const;
+		double min_intervalle () const;
 
 	private:
 		int _dimension;
 		fonction _fonction;
-        int _max_intervalle;
-		int _min_intervalle;
+        double _max_intervalle;
+		double _min_intervalle;
 		long long int _calls_to_function;
 };
 

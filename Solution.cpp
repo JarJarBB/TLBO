@@ -45,7 +45,7 @@ double fonctionRosenbrock(const std::vector<double> &X)
         sum += 100.0 * c1 * c1 + c2 * c2;
     }
 
-    return sum;
+    return sum - 150; // normal version is just sum
 }
 
 double fonctionRastrigin(const std::vector<double> &X)
